@@ -1,0 +1,21 @@
+/* open-sans-regular - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local(''),
+    url('@/assets/fonts/open-sans-v34-latin-regular.woff2') format('woff2'),
+    url('@/assets/fonts/open-sans-v34-latin-regular.woff') format('woff'),
+    url('@/assets/fonts/open-sans-v34-latin-regular.ttf') format('truetype');
+}
+
+/* open-sans-600 - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: local(''),
+    url('@/assets/fonts/open-sans-v34-latin-600.woff2') format('woff2'),
+    url('@/assets/fonts/open-sans-v34-latin-600.woff') format('woff'),
+    url('@/assets/fonts/open-sans-v34-latin-600.ttf') format('truetype');
+}

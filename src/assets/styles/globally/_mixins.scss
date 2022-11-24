@@ -1,0 +1,7 @@
+@mixin border-color-opacity($color, $opacity: 0.3) {
+  border-color: rgba($color, $opacity);
+}
+
+@mixin background-opacity($color, $opacity: 0.3) {
+  background: rgba($color, $opacity);
+}

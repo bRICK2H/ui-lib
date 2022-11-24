@@ -1,0 +1,35 @@
+.ui-input {
+  &__has-label {
+    height: 100%;
+    min-height: 48px;
+  }
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  border: 1px solid red;
+
+  &__input-content {
+  }
+
+  &__textarea-content {
+  }
+  &__textarea-content {
+    width: 100%;
+    min-height: 40px;
+    max-height: 100px;
+
+    box-sizing: border-box;
+    margin-bottom: -5px;
+    resize: vertical;
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
+  }
+}

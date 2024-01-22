@@ -43,9 +43,9 @@ export default {
   name: 'scrollbar',
   directive: {
     inserted(el: Element, binding: DirectiveBinding) {
-      const propsOptions = binding.value
+      const propsOptions = binding.value ?? {}
       const component = new Vue(UiScrollbar)
-      const isValidationValue = (options: OptionsType = {}) => {
+      const isValidationValue = (options: OptionsType) => {
         return Object.entries(options).every(([key, value]) => {
           const validationResult = validator(key, value)
 
@@ -65,11 +65,9 @@ export default {
 
       Vue.set(component, 'el', el)
 
-      if (propsOptions) {
-        Object.entries(propsOptions).forEach(([key, value]) => {
-          Vue.set(component.$props, key, value)
-        })
-      }
+      Object.entries(propsOptions).forEach(([key, value]) => {
+        Vue.set(component.$props, key, value)
+      })
 
       component.$mount(el)
     },

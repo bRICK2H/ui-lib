@@ -1,0 +1,419 @@
+@import './button-mixin.scss';
+
+@include b(button) {
+  min-width: 0;
+  max-width: 100%;
+  width: fit-content;
+  height: fit-content;
+
+  display: inline-block;
+  padding: 0;
+  outline: none;
+  cursor: pointer;
+  background: none;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  transition: border-color 0.2s, background-color 0.2s;
+
+  position: relative;
+  vertical-align: middle;
+
+  /** LOADING CONTENT */
+  @include e(loading-content) {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /** TEXT CONTENT */
+  @include e(text-content) {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    @include when(hidden) {
+      visibility: hidden;
+    }
+  }
+
+  /** SIZES */
+
+  // X-small size
+  @include e(xs) {
+    @include button-size(
+      $size: 20px,
+      $padding: 6px,
+      $padding-direction-icon: 6px,
+      $line-height: 16px,
+      $font-size: $av-font-size-xs,
+      $font-weight: $av-font-weight-bold
+    );
+  }
+
+  // Small size
+  @include e(sm) {
+    @include button-size(
+      $size: 24px,
+      $padding: 6px,
+      $padding-direction-icon: 6px,
+      $line-height: 20px,
+      $font-size: $av-font-size-xs,
+      $font-weight: $av-font-weight-medium
+    );
+  }
+
+  // Medium size
+  @include e(md) {
+    @include button-size(
+      $size: 32px,
+      $padding: 8px,
+      $padding-direction-icon: 8px,
+      $line-height: 20px,
+      $font-size: $av-font-size-xs,
+      $font-weight: $av-font-weight-bold
+    );
+  }
+
+  // Large size
+  @include e(lg) {
+    @include button-size(
+      $size: 40px,
+      $padding: 8px,
+      $padding-direction-icon: 12px,
+      $line-height: 20px,
+      $font-size: $av-font-size-xs,
+      $font-weight: $av-font-weight-medium
+    );
+
+    @include when(fab) {
+      border-radius: 12px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  // X-large size
+  @include e(xl) {
+    @include button-size(
+      $size: 48px,
+      $padding: 12px,
+      $padding-direction-icon: 16px,
+      $line-height: 20px,
+      $font-size: $av-font-size-xs,
+      $font-weight: $av-font-weight-bold
+    );
+  }
+
+  // 2X-large size
+  @include e(2xl) {
+    @include button-size(
+      $size: 56px,
+      $padding: 14px,
+      $padding-direction-icon: 18px,
+      $line-height: 20px,
+      $font-size: $av-font-size-m,
+      $font-weight: $av-font-weight-bold
+    );
+
+    @include when(fab) {
+      border-radius: 16px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  // 3X-large size
+  @include e(3xl) {
+    @include button-size(
+      $size: 96px,
+      $padding: 16px,
+      $padding-direction-icon: 20px,
+      $line-height: 22px,
+      $font-size: $av-font-size-m,
+      $font-weight: $av-font-weight-bold
+    );
+
+    @include when(fab) {
+      border-radius: 28px;
+      box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  /** COLORS */
+
+  // FILLED
+  @include e(filled) {
+    // Filled primary
+    @include m(primary) {
+      @include button-color(
+        $background-color-default: $av-brand-primary,
+        $background-color-disabled: $av-solid-brand-light,
+        $background-color-hover: $av-brand-primary-hover,
+        $background-color-active: $av-brand-primary-active,
+        $box-shadow-color-focus: $av-solid-brand-light
+      );
+    }
+
+    // Filled success
+    @include m(success) {
+      @include button-color(
+        $background-color-default: $av-fixed-success,
+        $background-color-disabled: $av-solid-fixed-success-lighter,
+        $background-color-hover: $av-fixed-success-hover,
+        $background-color-active: $av-fixed-success-active,
+        $box-shadow-color-focus: $av-solid-fixed-success-lighter
+      );
+    }
+
+    // Filled danger
+    @include m(danger) {
+      @include button-color(
+        $background-color-default: $av-fixed-danger,
+        $background-color-disabled: $av-solid-fixed-danger-lighter,
+        $background-color-hover: $av-fixed-danger-hover,
+        $background-color-active: $av-fixed-danger-active,
+        $box-shadow-color-focus: $av-solid-fixed-danger-lighter
+      );
+    }
+
+    // Filled critical
+    @include m(critical) {
+      @include button-color(
+        $background-color-default: $av-fixed-critical,
+        $background-color-disabled: $av-solid-fixed-critical-lighter,
+        $background-color-hover: $av-fixed-critical-hover,
+        $background-color-active: $av-fixed-critical-active,
+        $box-shadow-color-focus: $av-solid-fixed-critical-lighter
+      );
+    }
+
+    // Filled translucent
+    @include m(translucent) {
+      @include button-color(
+        $color-disabled: $av-fixed-white-bright,
+        $background-color-default: $av-fixed-white-lightest,
+        $border-color-focus: $av-fixed-white-lightest,
+        $background-color-disabled: $av-fixed-white-invisible,
+        $background-color-hover: $av-fixed-white-lighter,
+        $background-color-active: $av-fixed-white-bright,
+        $box-shadow-color-focus: $av-fixed-white-invisible
+      );
+    }
+  }
+
+  // TONAL
+  @include e(tonal) {
+    // Tonal primary
+    @include m(primary) {
+      @include button-color(
+        $color-default: $av-brand-primary,
+        $color-disabled: $av-brand-light,
+        $border-color-focus: $av-brand-bright,
+        $background-color-default: $av-brand-accent,
+        $background-color-active: $av-brand-bright,
+        $box-shadow-color-focus: $av-brand-lighter
+      );
+    }
+
+    // Tonal success
+    @include m(success) {
+      @include button-color(
+        $color-default: $av-fixed-success,
+        $color-disabled: $av-fixed-success-light,
+        $border-color-focus: $av-fixed-success-lighter,
+        $background-color-default: $av-fixed-success-lightest,
+        $background-color-active: $av-fixed-success-lighter,
+        $box-shadow-color-focus: $av-fixed-success-lightest
+      );
+    }
+
+    // Tonal danger
+    @include m(danger) {
+      @include button-color(
+        $color-default: $av-fixed-danger,
+        $color-disabled: $av-fixed-danger-light,
+        $border-color-focus: $av-fixed-danger-lighter,
+        $background-color-default: $av-fixed-danger-lightest,
+        $background-color-active: $av-fixed-danger-lighter,
+        $box-shadow-color-focus: $av-fixed-danger-accent
+      );
+    }
+
+    // Tonal critical
+    @include m(critical) {
+      @include button-color(
+        $color-default: $av-fixed-critical,
+        $color-disabled: $av-fixed-critical-light,
+        $border-color-focus: $av-fixed-critical-lighter,
+        $background-color-default: $av-fixed-critical-accent,
+        $background-color-active: $av-fixed-critical-lighter,
+        $box-shadow-color-focus: $av-fixed-critical-accent
+      );
+    }
+  }
+
+  // OUTLINE
+  @include e(outline) {
+    // Outline primary
+    @include m(primary) {
+      @include button-color(
+        $color-default: $av-brand-primary,
+        $color-disabled: $av-brand-light,
+        $border-color-default: $av-brand-primary,
+        $border-color-disabled: $av-brand-light,
+        $border-color-focus: $av-brand-primary,
+        $background-color-hover: $av-brand-accent,
+        $background-color-active: $av-brand-bright,
+        $box-shadow-color-focus: $av-brand-lighter
+      );
+    }
+
+    // Outline success
+    @include m(success) {
+      @include button-color(
+        $color-default: $av-fixed-success,
+        $color-disabled: $av-fixed-success-lighter,
+        $border-color-default: $av-fixed-success,
+        $border-color-disabled: $av-fixed-success-lighter,
+        $border-color-focus: $av-fixed-success,
+        $background-color-hover: $av-fixed-success-lightest,
+        $background-color-active: $av-fixed-success-lighter,
+        $box-shadow-color-focus: $av-fixed-success-lightest
+      );
+    }
+
+    // Outline danger
+    @include m(danger) {
+      @include button-color(
+        $color-default: $av-fixed-danger,
+        $color-disabled: $av-fixed-danger-light,
+        $border-color-default: $av-fixed-danger,
+        $border-color-disabled: $av-fixed-danger-light,
+        $border-color-focus: $av-fixed-danger,
+        $background-color-hover: $av-fixed-danger-lightest,
+        $background-color-active: $av-fixed-danger-lighter,
+        $box-shadow-color-focus: $av-fixed-danger-accent
+      );
+    }
+
+    // Outline critical
+    @include m(critical) {
+      @include button-color(
+        $color-default: $av-fixed-critical,
+        $color-disabled: $av-fixed-critical-lighter,
+        $border-color-default: $av-fixed-critical,
+        $border-color-disabled: $av-fixed-critical-lighter,
+        $border-color-focus: $av-fixed-critical,
+        $background-color-hover: $av-fixed-critical-accent,
+        $background-color-active: $av-fixed-critical-lighter,
+        $box-shadow-color-focus: $av-fixed-critical-accent
+      );
+    }
+  }
+
+  // GHOST
+  @include e(ghost) {
+    // Ghost primary
+    @include m(primary) {
+      @include button-color(
+        $color-default: $av-brand-primary,
+        $color-disabled: $av-brand-light,
+        $border-color-focus: $av-brand-bright,
+        $background-color-hover: $av-brand-accent,
+        $background-color-active: $av-brand-bright,
+        $box-shadow-color-focus: $av-brand-lighter
+      );
+    }
+
+    // Ghost success
+    @include m(success) {
+      @include button-color(
+        $color-default: $av-fixed-success,
+        $color-disabled: $av-fixed-success-lighter,
+        $border-color-focus: $av-fixed-success-lighter,
+        $background-color-hover: $av-fixed-success-lightest,
+        $background-color-active: $av-fixed-success-lighter,
+        $box-shadow-color-focus: $av-fixed-success-lightest
+      );
+    }
+
+    // Ghost danger
+    @include m(danger) {
+      @include button-color(
+        $color-default: $av-fixed-danger,
+        $color-disabled: $av-fixed-danger-light,
+        $border-color-focus: $av-fixed-danger-lighter,
+        $background-color-hover: $av-fixed-danger-lightest,
+        $background-color-active: $av-fixed-danger-lighter,
+        $box-shadow-color-focus: $av-fixed-danger-lightest
+      );
+    }
+
+    // Ghost critical
+    @include m(critical) {
+      @include button-color(
+        $color-default: $av-fixed-critical,
+        $color-disabled: $av-fixed-critical-lighter,
+        $border-color-focus: $av-fixed-critical-lighter,
+        $background-color-hover: $av-fixed-critical-accent,
+        $background-color-active: $av-fixed-critical-lighter,
+        $box-shadow-color-focus: $av-fixed-critical-accent
+      );
+    }
+  }
+
+  // TEXT
+  @include e(text) {
+    // Text primary
+    @include m(primary) {
+      @include button-color(
+        $color-default: $av-brand-primary,
+        $color-disabled: $av-brand-light,
+        $color-hover: $av-brand-primary-hover,
+        $color-active: $av-brand-primary-active,
+        $border-color-focus: $av-brand-bright,
+        $box-shadow-color-focus: $av-brand-lighter
+      );
+    }
+
+    // Text success
+    @include m(success) {
+      @include button-color(
+        $color-default: $av-fixed-success,
+        $color-disabled: $av-fixed-success-light,
+        $color-hover: $av-fixed-success-hover,
+        $color-active: $av-fixed-success-active,
+        $border-color-focus: $av-fixed-success-lighter,
+        $box-shadow-color-focus: $av-fixed-success-lightest
+      );
+    }
+
+    // Text danger
+    @include m(danger) {
+      @include button-color(
+        $color-default: $av-fixed-danger,
+        $color-disabled: $av-fixed-danger-light,
+        $color-hover: $av-fixed-danger-hover,
+        $color-active: $av-fixed-danger-active,
+        $border-color-focus: $av-fixed-danger-lighter,
+        $box-shadow-color-focus: $av-fixed-danger-lightest
+      );
+    }
+
+    // Text danger
+    @include m(critical) {
+      @include button-color(
+        $color-default: $av-fixed-critical,
+        $color-disabled: $av-fixed-critical-light,
+        $color-hover: $av-fixed-critical-hover,
+        $color-active: $av-fixed-critical-active,
+        $border-color-focus: $av-fixed-critical-lighter,
+        $box-shadow-color-focus: $av-fixed-critical-accent
+      );
+    }
+  }
+}

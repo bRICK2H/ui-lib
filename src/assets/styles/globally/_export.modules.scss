@@ -1,5 +1,20 @@
 @import 'variables.scss';
 
 :export {
-	colorBlackLight: $ui-color-black-light
+  colorSolidNavPrimary: $av-nav-primary;
+
+  colorSolidBrandPrimary: $av-brand-primary;
+  colorSolidBrandLight: $av-solid-brand-light;
+
+  colorFixedPrimary: $av-fixed-primary;
+  colorFixedSecondary: $av-fixed-secondary;
+  colorSolidFixedLight: $av-solid-fixed-light;
+  colorSolidFixedLighter: $av-solid-fixed-lighter;
+  colorSolidFixedLightest: $av-solid-fixed-lightest;
+  colorSolidFixedSecondary: $av-solid-fixed-secondary;
+
+  colorSolidWhitePrimary: $av-fixed-white;
+  colorSolidDangerPrimary: $av-fixed-danger;
+  colorSolidSuccessPrimary: $av-fixed-success;
+  colorSolidCriticalPrimary: $av-fixed-critical;
 }

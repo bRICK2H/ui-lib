@@ -1,42 +1,177 @@
-// 1 -  st: Smallest
-// 2 - xxs: eXtra eXtra Small
-// 3 -  xs: eXtra Small
-// 4 -   s: Small
-// 5 -   m: Medium
-// 6 -   l: Large
-// 7 -  xl: eXtra Large
-// 8 - xxl: eXtra eXtra Large
-// 9 -  lt: Largest
+// font-size
+$av-font-size-xxs: 12px;
+$av-font-size-xs: 14px;
+$av-font-size-s: 16px;
+$av-font-size-m: 18px;
+$av-font-size-l: 22px;
+$av-font-size-xl: 32px;
+$av-font-size-xxl: 48px;
 
-// Font-size
-$ui-font-size-st: 8px;
-$ui-font-size-xxs: 10px;
-$ui-font-size-xs: 12px;
-$ui-font-size-s: 14px;
-$ui-font-size-m: 18px;
-$ui-font-size-l: 18px;
-$ui-font-size-xl: 22px;
-$ui-font-size-xxl: 24px;
-$ui-font-size-lt: 32px;
+// line-height
+$av-line-height-xxs: 12px;
+$av-line-height-xs: 14px;
+$av-line-height-s: 16px;
+$av-line-height-m: 20px;
+$av-line-height-l: 24px;
+$av-line-height-xl: 32px;
+$av-line-height-xxl: 48px;
 
 // Font-weight
-$ui-font-weight-s: 400;
-$ui-font-weight-l: 600;
+$av-font-weight-normal: 400;
+$av-font-weight-medium: 500;
+$av-font-weight-bold: 600;
 
-// Line-height
-$ui-line-height-xxs: 12px;
-$ui-line-height-xs: 14px;
-$ui-line-height-s: 16px;
-$ui-line-height-m: 20px;
-$ui-line-height-l: 24px;
-$ui-line-height-xl: 32px;
-$ui-line-height-xxl: 48px;
+// Blue
+$av-nav-primary: rgb(0, 32, 77);
 
-// Color
-$ui-color-black-light: rgba(102, 111, 124, 1);
-$ui-font-color-default: #243143;
-$ui-primary-hover: #173e7e;
-$ui-primary-active: #0065e3;
-$ui-primary-default: #2668c5;
-$ui-primary-disabled: #e9f0f9;
-$ui-primary-disabled-color: #d4e1f3;
+// Accent
+$av-brand-primary: rgba(38, 104, 197, 1);
+$av-brand-primary-hover: rgba(30, 81, 154, 1);
+$av-brand-primary-active: rgba(21, 59, 111, 1);
+// Accent solid
+$av-solid-brand-lightest: rgba(244, 247, 252, 1);
+$av-solid-brand-accent: rgba(233, 240, 249, 1);
+$av-solid-brand-lighter: rgba(222, 232, 246, 1);
+$av-solid-brand-bright: rgba(212, 225, 243, 1);
+$av-solid-brand-light: rgba(190, 210, 238, 1);
+// Accent transparent
+$av-brand-light: rgba(38, 104, 197, 0.3);
+$av-brand-bright: rgba(38, 104, 197, 0.2);
+$av-brand-lighter: rgba(38, 104, 197, 0.15);
+$av-brand-accent: rgba(38, 104, 197, 0.1);
+$av-brand-lightest: rgba(38, 104, 197, 0.05);
+
+// ------------------------------------------------- //
+
+// Secondary
+$av-brand-secondary: rgba(64, 139, 234, 1);
+// Secondary solid
+$av-solid-brand-secondary-light: rgba(198, 220, 249, 1);
+$av-solid-brand-secondary-accent: rgba(226, 238, 252, 1);
+// Secondary transparent
+$av-brand-secondary-light: rgba(64, 139, 234, 0.3);
+$av-brand-secondary-accent: rgba(64, 139, 234, 0.15);
+
+// ------------------------------------------------- //
+
+// Navigation
+$av-nav-primary: rgba(0, 32, 77, 1);
+$av-nav-primary-hover: rgba(0, 47, 112, 1);
+$av-nav-primary-active: rgba(0, 38, 92, 1);
+$av-nav-light: rgba(0, 46, 104, 1);
+$av-nav-lightest: rgba(0, 101, 227, 0.3);
+$av-nav-secondary: rgba(0, 101, 227, 1);
+$av-nav-secondary-hover: rgba(0, 92, 207, 1);
+$av-nav-secondary-active: rgba(0, 83, 186, 1);
+$av-nav-secondary-light: rgba(0, 101, 227, 0.3);
+$av-nav-secondary-lighter: rgba(0, 101, 227, 0.2);
+$av-nav-secondary-lightest: rgba(0, 101, 227, 0.1);
+$av-nav-text: rgba(255, 255, 255, 1);
+$av-nav-text-active: rgba(255, 255, 255, 1);
+
+// ------------------------------------------------- //
+
+// Black
+$av-fixed-primary: rgba(36, 49, 67, 1);
+// Black solid
+$av-solid-fixed-secondary: rgba(58, 70, 86, 1);
+$av-solid-fixed-light: rgba(102, 111, 124, 1);
+$av-solid-fixed-lighter: rgba(167, 173, 180, 1);
+$av-solid-fixed-bright: rgba(189, 193, 199, 1);
+$av-solid-fixed-lightest: rgba(211, 214, 217, 1);
+$av-solid-fixed-invisible: rgba(233, 234, 236, 1);
+// Black transparent
+$av-fixed-secondary: rgba(36, 49, 67, 0.9);
+$av-fixed-light: rgba(36, 49, 67, 0.7);
+$av-fixed-lighter: rgba(36, 49, 67, 0.4);
+$av-fixed-bright: rgba(36, 49, 67, 0.3);
+$av-fixed-lightest: rgba(36, 49, 67, 0.2);
+$av-fixed-invisible: rgba(36, 49, 67, 0.1);
+
+// ------------------------------------------------- //
+
+// White
+$av-fixed-white: rgba(255, 255, 255, 1);
+$av-fixed-white-secondary: rgba(255, 255, 255, 0.95);
+$av-fixed-white-light: rgba(255, 255, 255, 0.6);
+$av-fixed-white-lighter: rgba(255, 255, 255, 0.4);
+$av-fixed-white-bright: rgba(255, 255, 255, 0.3);
+$av-fixed-white-lightest: rgba(255, 255, 255, 0.2);
+$av-fixed-white-invisible: rgba(255, 255, 255, 0.1);
+
+// ------------------------------------------------- //
+
+// Green
+$av-fixed-success: rgba(155, 194, 37, 1);
+$av-fixed-success-hover: rgba(140, 176, 33, 1);
+$av-fixed-success-active: rgba(127, 158, 30, 1);
+// Green solid
+$av-solid-fixed-success-light: rgba(215, 231, 168, 1);
+$av-solid-fixed-success-lighter: rgba(225, 237, 190, 1);
+$av-solid-fixed-success-lightest: rgba(240, 246, 222, 1);
+// Green transparent
+$av-fixed-success-light: rgba(155, 194, 37, 0.4);
+$av-fixed-success-lighter: rgba(155, 194, 37, 0.3);
+$av-fixed-success-lightest: rgba(155, 194, 37, 0.15);
+
+// ------------------------------------------------- //
+
+// Dark green
+$av-fixed-success-dark: rgba(96, 148, 37, 1);
+// Dark green solid
+$av-solid-fixed-success-dark-accent: rgba(207, 223, 190, 1);
+// Dark green transparent
+$av-fixed-success-dark-accent: rgba(96, 148, 37, 0.3);
+
+// ------------------------------------------------- //
+
+// Red
+$av-fixed-danger: rgba(210, 10, 16, 1);
+$av-fixed-danger-hover: rgba(190, 9, 14, 1);
+$av-fixed-danger-active: rgba(170, 8, 13, 1);
+$av-fixed-danger-bright: rgba(239, 11, 18, 1);
+// Red solid
+$av-solid-fixed-danger-lightest: rgba(250, 230, 231, 1);
+$av-solid-fixed-danger-accent: rgba(248, 218, 219, 1);
+$av-solid-fixed-danger-lighter: rgba(246, 206, 207, 1);
+$av-solid-fixed-danger-light: rgba(241, 181, 183, 1);
+// Red transparent
+$av-fixed-danger-light: rgba(210, 10, 16, 0.3);
+$av-fixed-danger-lighter: rgba(210, 10, 16, 0.2);
+$av-fixed-danger-accent: rgba(210, 10, 16, 0.15);
+$av-fixed-danger-lightest: rgba(210, 10, 16, 0.1);
+
+// ------------------------------------------------- //
+
+// Orange
+$av-fixed-critical: rgba(255, 115, 0, 1);
+$av-fixed-critical-hover: rgba(239, 108, 1, 1);
+$av-fixed-critical-active: rgba(223, 101, 2, 1);
+// Orange solid
+$av-solid-fixed-critical-accent: rgba(255, 234, 217, 1);
+$av-solid-fixed-critical-lighter: rgba(255, 213, 178, 1);
+$av-solid-fixed-critical-light: rgba(255, 199, 153, 1);
+// Orange transparent
+$av-fixed-critical-light: rgba(255, 115, 0, 0.4);
+$av-fixed-critical-lighter: rgba(255, 115, 0, 0.3);
+$av-fixed-critical-accent: rgba(255, 115, 0, 0.15);
+
+// ------------------------------------------------- //
+
+// Orange light
+$av-fixed-warning: rgba(255, 163, 16, 1);
+$av-fixed-warning-hover: rgba(255, 157, 0, 1);
+$av-fixed-warning-active: rgba(240, 147, 0, 1);
+// Orange light solid
+$av-solid-fixed-warning-accent: rgba(255, 241, 219, 1);
+$av-solid-fixed-warning-lighter: rgba(255, 227, 183, 1);
+$av-solid-fixed-warning-light: rgba(255, 218, 159, 1);
+// Orange light transparent
+$av-fixed-warning-accent: rgba(255, 163, 16, 0.15);
+$av-fixed-warning-lighter: rgba(255, 163, 16, 0.3);
+$av-fixed-warning-light: rgba(255, 163, 16, 0.4);
+
+// ------------------------------------------------- //
+
+// Yellow
+$av-fixed-highlight: rgba(255, 223, 0, 1);

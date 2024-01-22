@@ -1,5 +1,5 @@
 @mixin normalize {
-  font-size: $ui-line-height-xs;
-  font-weight: $ui-font-weight-l;
-  line-height: $ui-line-height-m;
+  font-size: $av-font-size-xs;
+  font-weight: $av-font-weight-bold;
+  line-height: $av-line-height-m;
 }

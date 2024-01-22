@@ -1,0 +1,151 @@
+@mixin target($i, $j: '') {
+  @if ($j != '') {
+    $j: '.#{target}-#{$j}';
+  }
+
+  .#{target}-#{$i}#{$j} {
+    @content;
+  }
+}
+
+// Generating button sizes
+@mixin button-size(
+  $size,
+  $padding,
+  $padding-direction-icon,
+  $font-size,
+  $line-height,
+  $font-weight
+) {
+  min-width: $size;
+  min-height: $size;
+
+  // When fluid
+  @include when(fluid) {
+    width: 100%;
+  }
+
+  // When right indent
+  @include when(right-indent) {
+    margin-right: 16px;
+  }
+
+  // When only one icon
+  @include when(icon-only-one) {
+    width: $size;
+    padding: 0;
+  }
+
+  // Target styles to text node
+  @include target(text-node) {
+    @include ellipsis;
+
+    font-size: $font-size;
+    font-weight: $font-weight;
+    line-height: $line-height;
+  }
+
+  // Target styles to multiple
+  @include target(multiline) {
+    white-space: normal;
+  }
+
+  // Modifier for button view
+  @include m(button-view) {
+    padding: 0 $padding;
+
+    // Target styles to text node
+    @include target(text-node) {
+      padding: 0 $padding;
+    }
+
+    // Target styles to multiple
+    @include target(multiline) {
+      padding: $padding;
+    }
+
+    // When icon direction left
+    @include when(icon-left) {
+      padding-left: $padding-direction-icon;
+    }
+
+    // When icon direction right
+    @include when(icon-right) {
+      padding-right: $padding-direction-icon;
+    }
+  }
+
+  // Modifier for text view
+  @include m(text-view) {
+    // When icon direction right
+    @include when(icon-right) {
+      // Target styles to text node
+      @include target(text-node) {
+        padding-right: $padding;
+      }
+    }
+
+    // When icon direction left
+    @include when(icon-left) {
+      // Target styles to text node
+      @include target(text-node) {
+        padding-left: $padding;
+      }
+    }
+  }
+}
+
+// Generating button colors
+@mixin button-color(
+  $color-default: $av-fixed-white,
+  $color-hover: $color-default,
+  $color-active: $color-default,
+  $color-disabled: $color-default,
+  $border-color-default: transparent,
+  $border-color-disabled: transparent,
+  $border-color-focus: transparent,
+  $background-color-default: unset,
+  $background-color-disabled: $background-color-default,
+  $background-color-hover: $background-color-default,
+  $background-color-active: unset,
+  $box-shadow-color-focus
+) {
+  // When state default
+  color: $color-default;
+  border-color: $border-color-default;
+  background-color: $background-color-default;
+
+  // When state disabled
+  &:disabled {
+    cursor: default;
+    color: $color-disabled;
+    border-color: $border-color-disabled;
+    background-color: $background-color-disabled;
+  }
+
+  @include when(enabled) {
+    // When state hover
+    &:hover {
+      color: $color-hover;
+      background-color: $background-color-hover;
+    }
+
+    // When state active
+    &:active {
+      color: $color-active;
+      background-color: $background-color-active;
+    }
+
+    // When state focus
+    &:focus-visible {
+      border-color: $border-color-focus;
+      box-shadow: 0 0 0 3px $box-shadow-color-focus;
+    }
+  }
+
+  // When state loading
+  @include when(loading) {
+    cursor: default;
+    background-color: $background-color-active;
+  }
+}

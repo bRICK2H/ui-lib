@@ -1,6 +1,7 @@
 @import '~normalize.css';
 @import 'normalize.scss';
 @import 'font-styles.scss';
+@import './components/index.scss';
 
 * {
   margin: 0;
@@ -9,10 +10,10 @@
 }
 
 body {
-  & * {
-    font-family: 'Open Sans', sans-serif;
-    color: $ui-font-color-default;
+  font-family: 'Open Sans', sans-serif;
+  color: $av-fixed-primary;
 
+  * {
     @include normalize;
   }
 }

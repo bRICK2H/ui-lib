@@ -1,204 +1,205 @@
 <template>
-  <!-- <div class="wrapper">
-    <div class="container">
-      <ui-input
-        value="123"
-        type="text"
-        label="Label"
-      />
+  <!-- <ui-scrollbar> -->
+  <!-- <VButtonTemplate /> -->
+  <!-- <IParent /> -->
 
-      <br />
+  <!-- <UiExampleLoader /> -->
 
-      <ui-input
-        value="  Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias aspernatur numquam placeat eos cupiditate enim minima minus sint pariatur repellat earum nam, natus expedita, at, incidunt nobis velit iste. Quod, repellendus tenetur. Quis consectetur vitae corporis? Animi facere, qui architecto perferendis, nam eveniet iste incidunt tenetur suscipit molestias natus ex, quas officiis rem quia tempora explicabo quidem ratione ad quam dolore ipsa facilis quis voluptates. At repellat dicta tempore molestias porro? Soluta expedita assumenda dolor facere magnam exercitationem voluptatem hic obcaecati eos, alias laudantium error, quod explicabo. Illum cupiditate atque illo cumque nobis. Aperiam incidunt, ut deleniti non repellat quisquam."
-        type="textarea"
-        label="Label"
-      />
-    </div>
-  </div> -->
+  <!-- </ui-scrollbar> -->
 
-  <!-- ---------------------------------------------- -->
+  <div style="height: 100%; padding: 20px">
+    <!-- <VInputButton /> -->
 
-  <!-- <ui-scrollbar :enable-internal-mode="true"> -->
-  <!-- <ui-scrollbar
-    :enable-internal-mode="false"
-    :width="400"
-    :height="400"
-  >
-    <div>
-      <div
-        style="
-          height: 200px;
-          width: 1000px;
-          background: #aba;
-          display: flex;
-          justify-content: flex-end;
-          color: #fff;
-          font-size: 30px;
-        "
-      >
-        !
-      </div>
-    </div>
-  </ui-scrollbar> -->
+    <VTableContainer />
 
-  <!-- <div v-scrollbar>
-    lorem1500
-  </div> -->
-
-  <!-- ------------------------------------------------- -->
-
-  <div style="padding: 50px">
-    <textarea
+    <!-- <table
       style="
-        min-width: 100px;
-        width: 200px;
-        min-height: 100px;
-        max-height: 200px;
+        display: block;
+        width: 100%;
+        border: 1px solid red;
+        border-collapse: collapse;
       "
     >
-    Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus quisquam dolore hic dolores porro officia non libero sint esse est tenetur tempora aperiam voluptas eum amet, saepe quibusdam quaerat quam cum deserunt aspernatur enim aliquid odio? Placeat quas dicta molestiae sit quibusdam voluptate! Voluptates magni rem accusantium, a, nisi quidem iusto ullam cupiditate vel pariatur soluta fuga, nam expedita. Fugit itaque aut nobis omnis officiis, qui molestias asperiores veritatis eaque molestiae assumenda repellendus? Voluptate perspiciatis unde placeat nihil sequi aliquid natus. Non sint eius placeat libero iusto, praesentium fugit, ipsa amet rem nostrum beatae accusamus pariatur asperiores officiis, accusantium deserunt?
-    </textarea>
+      <thead>
+        <tr>
+          <th class="col">1</th>
+          <th class="col lorem">Batman</th>
+          <th class="col">Robin</th>
+          <th class="col">The Flash</th>
+          <th class="col">Kid Flash</th>
+        </tr>
+      </thead>
 
-    <br />
-
-    <textarea
-      v-scrollbar="{
-        areaDragRule: 'both',
-        sliderColor: '250, 94, 8',
-        enableInternalMode: true,
-      }"
-    >
-    4Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus quisquam dolore hic dolores porro officia non libero sint esse est tenetur tempora aperiam voluptas eum amet, saepe quibusdam quaerat quam cum deserunt aspernatur enim aliquid odio? Placeat quas dicta molestiae sit quibusdam voluptate! Voluptates magni rem accusantium, a, nisi quidem iusto ullam cupiditate vel pariatur soluta fuga, nam expedita. Fugit itaque aut nobis omnis officiis, qui molestias asperiores veritatis eaque molestiae assumenda repellendus? Voluptate perspiciatis unde placeat nihil sequi aliquid natus. Non sint eius placeat libero iusto, praesentium fugit, ipsa amet rem nostrum beatae accusamus pariatur asperiores officiis, accusantium deserunt?
-    </textarea>
-
-    <br />
-
-    <ui-scrollbar
-      :enable-internal-mode="false"
-      :slider-size="12"
-    >
-      <textarea
-        style="
-          width: 300px;
-          min-width: 100px;
-          max-width: 400px;
-          min-height: 90px;
-          max-height: 300px;
-        "
-      >
-    Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus quisquam dolore hic dolores porro officia non libero sint esse est tenetur tempora aperiam voluptas eum amet, saepe quibusdam quaerat quam cum deserunt aspernatur enim aliquid odio? Placeat quas dicta molestiae sit quibusdam voluptate! Voluptates magni rem accusantium, a, nisi quidem iusto ullam cupiditate vel pariatur soluta fuga, nam expedita. Fugit itaque aut nobis omnis officiis, qui molestias asperiores veritatis eaque molestiae assumenda repellendus? Voluptate perspiciatis unde placeat nihil sequi aliquid natus. Non sint eius placeat libero iusto, praesentium fugit, ipsa amet rem nostrum beatae accusamus pariatur asperiores officiis, accusantium deserunt?
-    </textarea
-      >
-    </ui-scrollbar>
-
-    <br />
-
-    <ui-scrollbar
-      :width="200"
-      :height="80"
-    >
-      <div>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus
-        quisquam dolore hic dolores porro officia non libero sint esse est
-        tenetur tempora aperiam voluptas eum amet, saepe quibusdam quaerat quam
-        cum deserunt aspernatur enim aliquid odio? Placeat quas dicta molestiae
-        sit quibusdam voluptate! Voluptates magni rem accusantium, a, nisi
-        quidem iusto ullam cupiditate vel pariatur soluta fuga, nam expedita.
-        Fugit itaque aut nobis omnis officiis, qui molestias asperiores
-        veritatis eaque molestiae assumenda repellendus? Voluptate perspiciatis
-        unde placeat nihil sequi aliquid natus. Non sint eius placeat libero
-        iusto, praesentium fugit, ipsa amet rem nostrum beatae accusamus
-        pariatur asperiores officiis, accusantium deserunt?
-      </div>
-    </ui-scrollbar>
-
-    <br />
-
-    <ui-scrollbar
-      :width="200"
-      :height="200"
-      :enable-internal-mode="true"
-    >
-      <div>
-        <div
-          style="
-            height: 1000px;
-            width: 1000px;
-            background: #aba;
-            display: flex;
-            border: 1px solid;
-          "
-        >
-          <span
-            style="
-              width: 10px;
-              height: 10px;
-              background: blue;
-              align-self: flex-end;
-              margin: 2px;
-            "
-          ></span>
-          <span
-            style="
-              width: 10px;
-              height: 10px;
-              background: blue;
-              margin: 2px 2px 0 auto;
-            "
-          ></span>
-        </div>
-      </div>
-    </ui-scrollbar>
-
-    <ui-scrollbar
-      :width="200"
-      :height="200"
-      :enable-internal-mode="false"
-    >
-      <div>
-        <div
-          style="
-            height: 1000px;
-            width: 1000px;
-            background: #aba;
-            display: flex;
-            border: 1px solid;
-          "
-        >
-          <span
-            style="
-              width: 10px;
-              height: 10px;
-              background: blue;
-              align-self: flex-end;
-              margin: 2px;
-            "
-          ></span>
-          <span
-            style="
-              width: 10px;
-              height: 10px;
-              background: blue;
-              margin: 2px 2px 0 auto;
-            "
-          ></span>
-        </div>
-      </div>
-    </ui-scrollbar>
+      <tbody>
+        <tr>
+          <th class="col">Skill</th>
+          <td class="col">
+            <div class="lorem">
+              Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+              Similique aut exercitationem hic eius omnis nisi ullam eaque
+              labore! Maxime, cum voluptas?
+            </div>
+          </td>
+          <td class="col">Dex, acrobat</td>
+          <td class="col">4</td>
+          <td
+            class="col"
+            style="width: 100%"
+          >
+            Super speed
+          </td>
+        </tr>
+      </tbody>
+    </table> -->
   </div>
 </template>
 
 <script>
+import VTableContainer from '@/templates/table/index.vue'
+import UiExampleLoader from '@/components/_global/loader/example'
+// import VButtonTemplate from './components/button/templates'
+// import IParent from '@/components/old/parent.vue'
+
+import VInputButton from '@/templates/input-buttons.vue'
+
 export default {
   name: 'UiLib',
+  components: {
+    // IParent,
+    VTableContainer,
+    // VInputButton,
+    // VButtonTemplate,
+    // UiExampleLoader,
+  },
   data: () => ({
-    isLoad: false,
+    checkbox: [1, 2],
+    selected: [
+      {
+        userName: 'Lorem ipsum dolor sit amet consectetur adipisicing elit',
+        email: 'alex@mail.ru',
+        count: 0,
+        test: '0',
+        test2: '0',
+      },
+      {
+        userName: 'Den Brown',
+        email: 'den@mail.ru',
+        count: 2,
+        test: '000',
+        test2: '000',
+      },
+      {
+        userName: 'Azazat JOPOV',
+        email: 'jopov@mail.ru',
+        count: 10,
+        test: '1000',
+        test2: '10000',
+      },
+    ],
+    // selected: {
+    //   userName: 'Janna Di',
+    //   email: 'jannameagasuperhugeemail@mail.ru',
+    //   count: 1,
+    //   test: '00',
+    //   test2: '00',
+    // },
+    disabled: false,
+    isLoading: false,
+    pagination: { page: 1, total: 75, limit: 5, pages: 10 },
+    title: 1,
+    size: 'md',
+    isShow: true,
+    loading: false,
+    iconName: 'area-drag',
+    table: [],
+    scrollKey: 0,
   }),
-  mounted() {
+
+  created() {
+    // this.$preloader({
+    //   test: 1,
+    //   visible: true,
+    // })
+    // setTimeout(() => {
+    //   this.$preloader({
+    //     visible: false,
+    //   })
+    // }, 3000)
+  },
+  async mounted() {
+    // await this.wait()
+    // console.warn('AFTER THAT')
+    this.isLoading = true
     setTimeout(() => {
-      this.isLoad = true
+      this.isLoading = false
+    }, 2000)
+
+    setTimeout(() => {
+      this.table = [
+        {
+          userName: 'Lorem ipsum dolor sit amet consectetur adipisicing elit',
+          email: 'alex@mail.ru',
+          count: 0,
+          test: '0',
+          test2: '0',
+        },
+        {
+          userName: 'Janna Di',
+          email: 'jannameagasuperhugeemail@mail.ru',
+          count: 1,
+          test: '00',
+          test2: '00',
+        },
+        {
+          userName: 'Den Brown',
+          email: 'den@mail.ru',
+          count: 2,
+          test: '000',
+          test2: '000',
+        },
+        {
+          userName: 'Azazat JOPOV',
+          email: 'jopov@mail.ru',
+          count: 10,
+          test: '1000',
+          test2: '10000',
+        },
+      ]
     }, 1000)
+  },
+
+  methods: {
+    addObj() {
+      this.scrollKey++
+      this.isLoading = true
+      setTimeout(() => {
+        this.isLoading = false
+      }, 1000)
+
+      this.table.push({
+        userName: this.scrollKey++ + 'Артур Жопов',
+        email: this.scrollKey++ + 'jopov@mail.ru',
+        count: this.scrollKey++,
+        test: '1000',
+        test2: '10000',
+      })
+    },
+
+    eventCell(v) {
+      console.log(v)
+    },
+    load() {
+      // this.iconName = 'add'
+
+      // this.isShow = !this.isShow
+
+      this.title++
+      // console.log(this.title)
+
+      // setTimeout(() => {
+      //   this.loading = false
+      // }, 3000)
+    },
   },
 }
 </script>
@@ -206,11 +207,27 @@ export default {
 <style lang="scss">
 @import '@/assets/styles';
 
-.wrapper {
+body {
   height: 100vh;
-  display: flex;
 }
-.container {
-  margin: auto;
+
+.wrapper {
+  padding: 20px;
+  display: flex;
+  background: lightblue;
+
+  & .ui-table-body-cell-data.class-cell {
+    color: red;
+    font-size: $av-font-size-xxs;
+  }
+}
+
+.col {
+  border: 1px solid red;
+  // width: fit-content;
+  // max-width: 500px;
+
+  // min-width: 100px;
+  @include ellipsis;
 }
 </style>

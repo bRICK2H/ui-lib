@@ -1,3 +1,91 @@
+$namespace: 'ui';
+$state-prefix: 'is-';
+$element-separator: '__';
+$modifier-separator: '--';
+$modifier-value-separator: '-';
+
+@mixin b($block) {
+  $B: $namespace + '-' + $block !global;
+
+  .#{$B} {
+    @content;
+  }
+}
+
+@mixin e($element) {
+  $E: $element !global;
+  $selector: '&';
+  $currentSelector: '';
+
+  @each $unit in $element {
+    $currentSelector: #{$currentSelector +
+      '.' +
+      $B +
+      $element-separator +
+      $unit +
+      ','};
+  }
+
+  @if hitAllSpecialNestRule($selector) {
+    @at-root {
+      #{$selector} {
+        #{$currentSelector} {
+          @content;
+        }
+      }
+    }
+  } @else {
+    @at-root {
+      #{$currentSelector} {
+        @content;
+      }
+    }
+  }
+}
+
+@mixin m($modifier, $value: false) {
+  $selector: '&';
+  $currentSelector: '';
+
+  @if ($value) {
+    $currentSelector: #{$selector +
+      $modifier-separator +
+      $modifier +
+      $modifier-value-separator +
+      $value};
+  } @else {
+    @each $unit in $modifier {
+      $currentSelector: #{$currentSelector +
+        $selector +
+        $modifier-separator +
+        $unit +
+        ','};
+    }
+  }
+
+  @at-root {
+    #{$currentSelector} {
+      @content;
+    }
+  }
+}
+
+@mixin when($states) {
+  @each $state in $states {
+    @at-root {
+      #{if(&, '&.#{$state-prefix + $state}','.#{$state-prefix + $state}')} {
+        @content;
+      }
+    }
+  }
+}
+
+@mixin ellipsis() {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 @mixin border-color-opacity($color, $opacity: 0.3) {
   border-color: rgba($color, $opacity);
 }

@@ -409,9 +409,8 @@ export default {
     this.resizeObserver?.disconnect()
     this.mutationObserver?.disconnect()
 
+    this.removeHandleScroll()
     window.removeEventListener('resize', this.resize)
-    window.removeEventListener('mouseup', this.dragScrollEnd)
-    window.removeEventListener('mousemove', this.dragScrollMove)
 
     if (this.hasTextareaContent) {
       this.content.removeEventListener('scroll', this.scroll)
@@ -423,9 +422,13 @@ export default {
   mounted() {
     this.init()
   },
+  updated() {
+    this.scrollToNative()
+  },
   methods: {
     async init() {
       this.content = this.$refs['scrollbar-content']
+      this.$emit('scroll-target', this.content)
 
       if (this.el) {
         this.content.append(this.el)
@@ -449,10 +452,18 @@ export default {
       this.initObserver()
     },
 
-    initEvents() {
-      window.addEventListener('resize', this.resize)
+    addHandleScroll() {
       window.addEventListener('mouseup', this.dragScrollEnd)
       window.addEventListener('mousemove', this.dragScrollMove)
+    },
+
+    removeHandleScroll() {
+      window.removeEventListener('mouseup', this.dragScrollEnd)
+      window.removeEventListener('mousemove', this.dragScrollMove)
+    },
+
+    initEvents() {
+      window.addEventListener('resize', this.resize)
     },
 
     async initObserver() {
@@ -560,20 +571,33 @@ export default {
       )
     },
 
+    scrollToNative() {
+      if (this.deltaY > 0 && this.deltaY > this.content.scrollTop) {
+        this.content.scrollTop = this.deltaY
+      }
+
+      if (this.deltaX > 0 && this.deltaX > this.content.scrollLeft) {
+        this.content.scrollLeft = this.deltaX
+      }
+    },
+
     async resize() {
       this.setSizes()
       await this.$nextTick()
 
-      this.scrollTop = Math.round(
+      const scrollTop = Math.round(
         (this.scrollBarHeight / this.scrollHeight) * this.deltaY
       )
-
-      this.scrollLeft = Math.round(
+      const scrollLeft = Math.round(
         (this.scrollBarWidth / this.scrollWidth) * this.deltaX
       )
+
+      this.scrollTop = Number.isNaN(parseFloat(scrollTop)) ? 0 : scrollTop
+      this.scrollLeft = Number.isNaN(parseFloat(scrollLeft)) ? 0 : scrollLeft
     },
 
     dragScrollStart(event, side) {
+      this.addHandleScroll()
       this.isCapturedSlider = true
       this.currentSide = side
 
@@ -609,13 +633,13 @@ export default {
 
       const position = isSideY ? 'Top' : 'Left'
 
-      this[`scroll${position}`] = scrollOffset
       this.content[`scroll${position}`] =
         scrollOffset *
         ((scrollSize - offsetSize) / (scrollBarSize - sliderSize))
     },
 
     dragScrollEnd() {
+      this.removeHandleScroll()
       this.isCapturedSlider = false
     },
 
@@ -765,8 +789,7 @@ body {
     scrollbar-width: none;
 
     &::-webkit-scrollbar {
-      width: 0;
-      height: 0;
+      display: none;
     }
   }
 
@@ -864,6 +887,7 @@ body {
     border-radius: $scroll-bar-border-radius;
     border: $scroll-bar-border-size solid $scroll-bar-border-color;
 
+    z-index: 1;
     overflow: hidden;
   }
 

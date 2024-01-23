@@ -627,6 +627,7 @@ export default {
       }
 
       if (this.updateScrollOnLoad) {
+        this.updateData()
         this.scrollUpdate()
       }
 
@@ -855,6 +856,10 @@ export default {
         this.visibleTableData.length,
         scrollTop / this.rowBodyHeight
       )
+    },
+
+    updateData() {
+      this.startVisibleRowIndex = 0
     },
 
     scrollUpdate() {

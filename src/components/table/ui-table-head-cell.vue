@@ -209,6 +209,7 @@ export default {
     currentWidth: 0,
     grabPositionX: 0,
     isActiveResize: false,
+    headResizeObserver: null,
     colorSolidBrandPrimary: style.colorSolidBrandPrimary,
     colorSolidFixedLighter: style.colorSolidFixedLighter,
   }),
@@ -317,11 +318,8 @@ export default {
       this.setWidth()
     },
 
-    'store.isColumnsWidthUpdated': {
-      immediate: true,
-      handler() {
-        this.setWidth()
-      },
+    'store.isColumnsWidthUpdated'() {
+      this.headResizeObserver?.disconnect()
     },
 
     sortBy: {
@@ -344,10 +342,12 @@ export default {
 
   destroyed() {
     this.removeHandleResize()
+    this.headResizeObserver?.disconnect()
   },
 
   mounted() {
     this.title = this.getTitle()
+    this.initHeadResizeObserver()
   },
 
   methods: {
@@ -356,6 +356,11 @@ export default {
 
       const cellRef = this.$refs['head-cell']
       const textRef = this.$refs['head-text']
+
+      if (!cellRef || !textRef) {
+        return
+      }
+
       const { width } = textRef.getBoundingClientRect()
       const initWidth = this.width === 'auto' ? width : this.width || width
       const isSpecifiedWidth =
@@ -517,6 +522,15 @@ export default {
     removeHandleResize() {
       document.removeEventListener('mouseup', this.deactivateResize)
       document.removeEventListener('mousemove', this.moveResize)
+    },
+
+    async initHeadResizeObserver() {
+      await this.$nextTick()
+
+      const headNode = this.$refs['head-cell']
+
+      this.headResizeObserver = new ResizeObserver(this.setWidth)
+      this.headResizeObserver.observe(headNode)
     },
   },
 }

@@ -37,7 +37,6 @@
             </div>
 
             <ui-table-head-row
-              v-if="hasTableData"
               :bus="bus"
               :store="store"
               :loading="loading"

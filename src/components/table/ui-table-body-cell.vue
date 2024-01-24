@@ -295,7 +295,7 @@ export default {
     },
 
     'store.isColumnsWidthUpdated'() {
-      this.bodyResizeObserver?.disconnect()
+      this.removeBodyResizeObserver()
     },
   },
 
@@ -305,7 +305,7 @@ export default {
 
   destroyed() {
     clearInterval(this.intervalId)
-    this.bodyResizeObserver?.disconnect()
+    this.removeBodyResizeObserver()
   },
 
   methods: {
@@ -412,6 +412,10 @@ export default {
       }
 
       return null
+    },
+
+    removeBodyResizeObserver() {
+      this.bodyResizeObserver?.disconnect()
     },
 
     async initBodyResizeObserver() {

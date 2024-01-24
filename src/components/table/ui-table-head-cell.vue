@@ -319,7 +319,7 @@ export default {
     },
 
     'store.isColumnsWidthUpdated'() {
-      this.headResizeObserver?.disconnect()
+      this.removeHeadResizeObserver()
     },
 
     sortBy: {
@@ -342,7 +342,7 @@ export default {
 
   destroyed() {
     this.removeHandleResize()
-    this.headResizeObserver?.disconnect()
+    this.removeHeadResizeObserver()
   },
 
   mounted() {
@@ -522,6 +522,10 @@ export default {
     removeHandleResize() {
       document.removeEventListener('mouseup', this.deactivateResize)
       document.removeEventListener('mousemove', this.moveResize)
+    },
+
+    removeHeadResizeObserver() {
+      this.headResizeObserver?.disconnect()
     },
 
     async initHeadResizeObserver() {

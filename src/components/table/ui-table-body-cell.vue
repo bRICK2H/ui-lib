@@ -317,6 +317,11 @@ export default {
     setWidth() {
       const cellRef = this.$refs['body-cell']
       const textRef = this.$refs['body-text']
+
+      if (!cellRef || !textRef) {
+        return
+      }
+
       const isSpecifiedWidth =
         Boolean(this.width) && typeof this.width === 'number'
       const { width } = textRef.getBoundingClientRect()

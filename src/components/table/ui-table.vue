@@ -540,6 +540,10 @@ export default {
 
     tableBodyValueHeight() {
       if (this.maxRowCount !== 0) {
+        if (this.tableData.length === 0) {
+          return this.rowBodyHeight
+        }
+
         return this.maxRowCount > this.tableData.length
           ? this.tableData.length * this.rowBodyHeight
           : this.maxRowCount * this.rowBodyHeight

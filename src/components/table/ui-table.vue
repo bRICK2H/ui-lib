@@ -539,17 +539,17 @@ export default {
     },
 
     tableBodyValueHeight() {
-      if (this.maxRowCount !== 0) {
-        if (this.tableData.length === 0) {
-          return this.rowBodyHeight
-        }
-
-        return this.maxRowCount > this.tableData.length
-          ? this.tableData.length * this.rowBodyHeight
-          : this.maxRowCount * this.rowBodyHeight
+      if (this.maxRowCount === 0) {
+        return this.height > 0 ? this.height : this.dynamicHeight
       }
 
-      return this.height > 0 ? this.height : this.dynamicHeight
+      if (this.tableData.length === 0) {
+        return this.rowBodyHeigh
+      }
+
+      return this.maxRowCount > this.tableData.length
+        ? this.tableData.length * this.rowBodyHeight
+        : this.maxRowCount * this.rowBodyHeight
     },
   },
 

@@ -100,14 +100,15 @@
               </template>
 
               <template v-else>
-                <template v-for="(row, index) of tableData">
+                <div :style="invisibleTopHeight"></div>
+                <template v-for="(row, index) of renderTableData">
+                  <!-- v-if="showVisibleRows(index)" -->
                   <ui-table-body-row
-                    v-if="showVisibleRows(index)"
-                    :key="`row:${index}`"
+                    :key="`row:${index + startVisibleRowIndex}`"
                     :row="row"
                     :bus="bus"
                     :store="store"
-                    :index-row="index"
+                    :index-row="index + startVisibleRowIndex"
                     :loading="loading"
                     :padding-columns-x="paddingColumnsX"
                     :highlight-row="highlightRow"
@@ -120,12 +121,13 @@
                     :row-cursor-pointer="rowCursorPointer"
                     :highlight-checked-row="highlightCheckedRow"
                   />
-                  <tr
+                  <!-- <tr
                     v-else
                     :key="`row:${index}`"
                     class="ui-table-body-invisible-row"
-                  ></tr>
+                  ></tr> -->
                 </template>
+                <div :style="invisibleBottomHeight"></div>
               </template>
 
               <div
@@ -551,6 +553,38 @@ export default {
         ? this.tableData.length * this.rowBodyHeight
         : this.maxRowCount * this.rowBodyHeight
     },
+
+    renderTableData() {
+      return this.tableData.slice(
+        this.startVisibleRowIndex,
+        this.startVisibleRowIndex + this.visibleRows
+      )
+    },
+
+    invisibleTopHeight() {
+      return {
+        height: `${this.startVisibleRowIndex * this.rowBodyHeight}px`,
+      }
+    },
+
+    invisibleBottomHeight() {
+      // return {
+      //   height: `${
+      //     this.rowBodyHeight *
+      //     (this.tableData.length +
+      //       480 / this.rowBodyHeight -
+      //       (this.startVisibleRowIndex + this.visibleRows))
+      //   }px`,
+      // }
+
+      return {
+        height: `${
+          this.rowBodyHeight *
+          (this.tableData.length -
+            (this.startVisibleRowIndex + this.visibleRows))
+        }px`,
+      }
+    },
   },
 
   watch: {
@@ -859,6 +893,11 @@ export default {
         this.visibleTableData.length,
         scrollTop / this.rowBodyHeight
       )
+
+      // this.startVisibleRowIndex = Math.min(
+      //   this.visibleTableData.length + 480 / this.rowBodyHeight,
+      //   scrollTop / this.rowBodyHeight
+      // )
     },
 
     updateData() {

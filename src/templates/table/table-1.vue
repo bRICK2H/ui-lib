@@ -40,22 +40,21 @@
       style="width: 100%; height: 100px; background: green"
     ></div>
 
-    <!-- :offset-height-bottom="50" -->
     <div style="display: flex; gap: 20">
-      <ui-table
+      <!-- <ui-table
         :table-data="tData2"
         :loading="isLoading"
         :outer-row-selected="selected"
-        vertical-border
-        show-hover-hint
-        resizable-column
         :highlight-row="(row) => row.is_active === 1"
         :row-cursor-pointer="(row) => row.is_active === 1"
         :highlight-checked-row="true"
-        scroll-update
         :cache-column-size="cacheColumnSize2"
         :force-table-size-update="isShowBlock"
         :padding-columns-x="40"
+        vertical-border
+        show-hover-hint
+        resizable-column
+        scroll-update
         @action-row="actionRow"
         @select-row="selectRow"
         @scroll-down="scrollDown"
@@ -101,22 +100,23 @@
           sort-by="desc"
           column-key="first_name"
         />
-      </ui-table>
+      </ui-table> -->
 
       <ui-table
+        :height="487"
         :table-data="tData"
         :loading="isLoading"
         :outer-row-selected="selected"
-        vertical-border
-        show-hover-hint
-        resizable-column
         :highlight-row="(row) => row.is_active === 1"
         :row-cursor-pointer="(row) => row.is_active === 1"
         :highlight-checked-row="true"
-        scroll-update
         :cache-column-size="cacheColumnSize"
         :force-table-size-update="isShowBlock"
         :padding-columns-x="40"
+        vertical-border
+        show-hover-hint
+        resizable-column
+        scroll-update
         @action-row="actionRow"
         @select-row="selectRow"
         @scroll-down="scrollDown"

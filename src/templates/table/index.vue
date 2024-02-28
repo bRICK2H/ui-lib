@@ -36,7 +36,7 @@ export default {
   },
 
   data: () => ({
-    tableTemplate: 3,
+    tableTemplate: 1,
   }),
 
   computed: {

@@ -276,6 +276,12 @@ export default {
   },
 
   watch: {
+    page() {
+      if (this.params.page !== this.page) {
+        this.params.page = this.page
+      }
+    },
+
     params: {
       deep: true,
       handler() {

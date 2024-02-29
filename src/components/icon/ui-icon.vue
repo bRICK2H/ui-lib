@@ -1,6 +1,7 @@
 <template>
   <span
     :title="title"
+    :style="{ '--color': currentColor }"
     class="ui-icon-container"
     v-on="listeners"
   >
@@ -17,6 +18,8 @@
 </template>
 
 <script>
+import style from '@/assets/styles/globally/_export.modules.scss'
+
 export default {
   name: 'UiIcon',
   props: {
@@ -61,12 +64,28 @@ export default {
     iconHeight() {
       return this.size ? this.size : this.height
     },
+
+    currentColor() {
+      if (this.color !== '') {
+        return this.color
+      }
+
+      return this.$parent.$options._componentTag === 'ui-button'
+        ? 'inherit'
+        : style.colorBlackLightest
+    },
   },
 }
 </script>
 
 <style lang="scss">
+$color: var(--color);
+
 .ui-icon-container {
   display: flex;
+
+  & use {
+    color: $color;
+  }
 }
 </style>

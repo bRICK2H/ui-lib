@@ -67,36 +67,38 @@
           >
             <template v-if="hasTableData">
               <template v-if="hasGroupRow">
-                <ui-table-group-row
-                  v-for="(groupRow, i) of groupRowsOptions"
-                  :key="`group-row:${i}`"
-                  :bus="bus"
-                  :store="store"
-                  :loading="loading"
-                  :index-group-row="i"
-                  :group-row="groupRow"
-                  :padding-columns-x="paddingColumnsX"
-                  :active-groups="activeGroups"
-                  :highlight-row="highlightRow"
-                  :column-options="columnOptions"
-                  :row-body-height="rowBodyHeight"
-                  :show-hover-hint="showHoverHint"
-                  :vertical-border="verticalBorder"
-                  :active-group-row="activeGroupRow"
-                  :resizable-column="resizableColumn"
-                  :cache-column-size="cacheColumnSize"
-                  :show-visible-rows="showVisibleRows"
-                  :group-table-data="groupTableData[i]"
-                  :horizontal-border="horizontalBorder"
-                  :row-cursor-pointer="rowCursorPointer"
-                  :group-rows-options="groupRowsOptions"
-                  :highlight-checked-row="highlightCheckedRow"
-                  :primary-group-indexes="primaryGroupIndexes"
-                  :sequential-group-indexes="sequentialGroupIndexes"
-                  @set-active-group-row="
-                    (event) => setActiveGroupRow({ event, index: i })
-                  "
-                />
+                <template v-for="(groupRow, i) of groupRowsOptions">
+                  <ui-table-group-row
+                    v-if="groupTableData[i].length > 0"
+                    :key="`group-row:${i}`"
+                    :bus="bus"
+                    :store="store"
+                    :loading="loading"
+                    :index-group-row="i"
+                    :group-row="groupRow"
+                    :padding-columns-x="paddingColumnsX"
+                    :active-groups="activeGroups"
+                    :highlight-row="highlightRow"
+                    :column-options="columnOptions"
+                    :row-body-height="rowBodyHeight"
+                    :show-hover-hint="showHoverHint"
+                    :vertical-border="verticalBorder"
+                    :active-group-row="activeGroupRow"
+                    :resizable-column="resizableColumn"
+                    :cache-column-size="cacheColumnSize"
+                    :show-visible-rows="showVisibleRows"
+                    :group-table-data="groupTableData[i]"
+                    :horizontal-border="horizontalBorder"
+                    :row-cursor-pointer="rowCursorPointer"
+                    :group-rows-options="groupRowsOptions"
+                    :highlight-checked-row="highlightCheckedRow"
+                    :primary-group-indexes="primaryGroupIndexes"
+                    :sequential-group-indexes="sequentialGroupIndexes"
+                    @set-active-group-row="
+                      (event) => setActiveGroupRow({ event, index: i })
+                    "
+                  />
+                </template>
               </template>
 
               <template v-else>
@@ -166,6 +168,7 @@
 <script>
 import bus from './bus'
 import store from './store'
+import isEqual from 'lodash/isEqual'
 import {
   hasItemStorage,
   getItemStorage,
@@ -678,6 +681,14 @@ export default {
     },
 
     createGroupRowsOptions({ ctx, options }) {
+      const hasGroupRow = ctx.groupRowsOptions.some(({ groupRowsProps }) =>
+        isEqual(options.groupRowsProps, groupRowsProps)
+      )
+
+      if (hasGroupRow) {
+        return
+      }
+
       ctx.groupRowsOptions.push(options)
     },
 

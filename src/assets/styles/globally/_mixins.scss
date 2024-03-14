@@ -80,10 +80,18 @@ $modifier-value-separator: '-';
   }
 }
 
-@mixin ellipsis() {
+@mixin ellipsis($line-clamp: 1) {
   overflow: hidden;
-  white-space: nowrap;
   text-overflow: ellipsis;
+
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $line-clamp;
+
+  @if $line-clamp == 1 {
+    white-space: nowrap;
+  } @else {
+    white-space: normal;
+  }
 }
 
 @mixin border-color-opacity($color, $opacity: 0.3) {

@@ -10,7 +10,9 @@
   <div style="height: 100%; padding: 20px">
     <!-- <VInputButton /> -->
 
-    <VTableContainer />
+    <!-- <VTableContainer /> -->
+
+    <v-template-filters />
 
     <!-- <table
       style="
@@ -61,12 +63,14 @@ import UiExampleLoader from '@/components/_global/loader/example'
 // import IParent from '@/components/old/parent.vue'
 
 import VInputButton from '@/templates/input-buttons.vue'
+import VTemplateFilters from '@/templates/filtres.vue'
 
 export default {
   name: 'UiLib',
   components: {
     // IParent,
-    VTableContainer,
+    // VTableContainer,
+    VTemplateFilters,
     // VInputButton,
     // VButtonTemplate,
     // UiExampleLoader,

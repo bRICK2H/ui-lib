@@ -1,15 +1,16 @@
 <template>
   <section
-    v-show="isVisibleFilter"
     class="ui-filter"
-    :style="styles"
+    :style="filterStyles"
   >
+    <!-- Шапка фильтра -->
     <header class="ui-filter-header">
       <h3>Фильтры</h3>
 
+      <!-- Свернуть -->
       <ui-button
         variant="text-primary"
-        @click="close"
+        @click="closeFilter"
       >
         <ui-icon
           name="chevron-left"
@@ -19,13 +20,20 @@
       </ui-button>
     </header>
 
-    <ui-scrollbar>
-      <div class="ui-filter-content">
+    <!-- Содержимое фильтра -->
+    <div
+      ref="filter-content"
+      class="ui-filter-content"
+      :style="filterContentHeight"
+    >
+      <ui-scrollbar v-if="isVisibleContent">
         <slot />
-      </div>
-    </ui-scrollbar>
+      </ui-scrollbar>
+    </div>
 
+    <!-- Подвал фильтра -->
     <footer class="ui-filter-footer">
+      <!-- Сбросить все -->
       <ui-button
         variant="text-primary"
         @click="clearFilters"
@@ -37,6 +45,7 @@
         Сбросить все
       </ui-button>
 
+      <!-- Применить -->
       <ui-button @click="applyFilters">Применить</ui-button>
     </footer>
   </section>
@@ -52,21 +61,21 @@ export default {
 
   props: {
     /**
-     * ? Ширина обертки фильтра
+     * ? Ширина фильтра
      * - все переданные значения переводятся в пиксели
      */
     width: {
-      type: [Number, String],
-      default: '',
+      type: Number,
+      default: -1,
     },
 
     /**
-     * ? Высота обертки фильтра
+     * ? Высота фильтра
      * - все переданные значения переводятся в пиксели
      */
     height: {
-      type: [Number, String],
-      default: '',
+      type: Number,
+      default: -1,
     },
 
     /**
@@ -90,7 +99,10 @@ export default {
   },
 
   data: () => ({
-    filterRows: [],
+    groups: [],
+    filters: [],
+    contentHeight: -1,
+    isVisibleContent: false,
   }),
 
   computed: {
@@ -98,100 +110,81 @@ export default {
       return this.visibleModel ?? this.visible
     },
 
-    styles() {
-      const width = this.width === '' ? '100%' : `${this.width}px`
-      const height = this.height === '' ? '100%' : `${this.height}px`
-
-      return { width, height }
-    },
-
-    resultFilterRows() {
-      return this.filterRows.reduce((acc, row) => {
+    filterTotals() {
+      return this.filters.reduce((acc, row) => {
         const { name } = row
         acc[name] = row[name]
 
         return acc
       }, {})
     },
+
+    filterStyles() {
+      const width = this.getFilterSize(this.width)
+      const height = this.getFilterSize(this.height)
+
+      return {
+        height,
+        opacity: this.isVisibleFilter ? 1 : 0,
+        width: this.isVisibleFilter ? width : 0,
+      }
+    },
+
+    filterContentHeight() {
+      return {
+        height: this.contentHeight,
+      }
+    },
+  },
+
+  watch: {
+    isVisibleFilter: {
+      immediate: true,
+      async handler() {
+        await this.$nextTick()
+
+        if (!this.isVisibleFilter) {
+          return
+        }
+
+        this.setContentHeight()
+
+        // Таймаут ждет завершение анимации .2s для контента
+        setTimeout(() => (this.isVisibleContent = true), 200)
+      },
+    },
   },
 
   mounted() {
-    const slots = this.$slots.default
-
-    if (!slots) {
-      return
-    }
-
-    this.defineFilterRows(slots)
-    this.defineFilterGroup(slots)
     this.checkDuplicateFilterNames()
   },
 
   methods: {
     applyFilters() {
-      this.close()
-      this.$emit('apply-filters', this.resultFilterRows)
+      this.closeFilter()
+      this.$emit('apply-filters', this.filterTotals)
     },
 
-    clearFilters() {
-      for (const row of this.filterRows) {
-        row[row.name] = null
-      }
-
-      for (const group of this.filterGroups) {
-        group.isVisibleGroup = true
-      }
-
-      this.$emit('clear-filters', this.resultFilterRows)
-    },
-
-    close() {
+    closeFilter() {
       const event = this.visibleModel === null ? 'close' : 'input'
 
       this.$emit(event, false)
     },
 
-    defineFilterRows(slots) {
-      const tags = ['ui-filter-row', 'UiFilterRow']
+    clearFilters() {
+      for (const row of this.filters) {
+        row[row.name] = row.default
+      }
 
-      this.filterRows = slots.reduce((acc, vnode) => {
-        const { componentInstance, componentOptions } = vnode
+      for (const group of this.groups) {
+        group.isVisibleGroup = true
+      }
 
-        if (tags.includes(componentOptions.tag)) {
-          acc.push(componentInstance.row)
-        } else {
-          const deepSlots = componentInstance.$slots.default
-          const deepRows = deepSlots.reduce((acc, { componentInstance }) => {
-            if (componentInstance) {
-              acc.push(componentInstance.row)
-            }
-
-            return acc
-          }, [])
-
-          acc.push(...deepRows)
-        }
-
-        return acc
-      }, [])
-    },
-
-    defineFilterGroup(slots) {
-      const tags = ['ui-filter-group', 'UiFilterGroup']
-
-      this.filterGroups = slots.reduce((acc, vnode) => {
-        const { componentInstance, componentOptions } = vnode
-
-        if (tags.includes(componentOptions.tag)) {
-          acc.push(componentInstance)
-        }
-
-        return acc
-      }, [])
+      this.$emit('clear-filters', this.filterTotals)
     },
 
     checkDuplicateFilterNames() {
-      const filterNames = this.filterRows.reduce(
+      const filterNames = this.filters.reduce(
         (acc, { name }) => {
           if (!(name in acc)) {
             acc[name] = 1
@@ -216,6 +209,26 @@ export default {
         )
       }
     },
+
+    setContentHeight() {
+      if (['', '100%'].includes(this.$el.parentElement.style.height)) {
+        this.contentHeight = '100%'
+
+        return
+      }
+
+      const filterContent = this.$refs['filter-content']
+
+      if (filterContent) {
+        const { height } = filterContent.getBoundingClientRect()
+
+        this.contentHeight = `${height || filterContent.offsetHeight}px`
+      }
+    },
+
+    getFilterSize(size) {
+      return size === -1 ? '100%' : `${size}px`
+    },
   },
 }
 </script>
@@ -225,7 +238,12 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border: 1px solid $av-solid-brand-bright;
+
+  overflow: hidden;
+  transition: 0.2s ease;
+  background: $av-fixed-white;
+  border-left: 1px solid $av-solid-brand-bright;
+  border-right: 1px solid $av-solid-brand-bright;
 }
 
 .ui-filter-header,

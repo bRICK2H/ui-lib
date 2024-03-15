@@ -63,14 +63,14 @@ import UiExampleLoader from '@/components/_global/loader/example'
 // import IParent from '@/components/old/parent.vue'
 
 import VInputButton from '@/templates/input-buttons.vue'
-import VTemplateFilters from '@/templates/filtres.vue'
+import VTemplateFilters from '@/templates/filters.vue'
 
 export default {
   name: 'UiLib',
   components: {
+    VTemplateFilters,
     // IParent,
     // VTableContainer,
-    VTemplateFilters,
     // VInputButton,
     // VButtonTemplate,
     // UiExampleLoader,

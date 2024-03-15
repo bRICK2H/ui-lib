@@ -81,26 +81,55 @@ export default {
     },
   },
 
+  created() {
+    this.findParentContextFilter()
+  },
+
   mounted() {
-    const groupContent = this.$refs['group-content']
-
-    if (groupContent) {
-      const { height } = groupContent.getBoundingClientRect()
-
-      this.groupHeight = height || groupContent.offsetHeight
-    }
+    this.setGroupHeight()
   },
 
   methods: {
+    addGroup(context) {
+      context.groups.push(this.$data)
+    },
+
     toggleGroupVisibility() {
       this.isVisibleGroup = !this.isVisibleGroup
+    },
+
+    isParentFilterComponent(ctx) {
+      return ['UiFilters', 'ui-filters'].includes(ctx.$options._componentTag)
+    },
+
+    findParentContextFilter() {
+      let context = this.$parent
+
+      while (!this.isParentFilterComponent(context)) {
+        context = context.$parent
+
+        if (this.isParentFilterComponent(context)) {
+          this.addGroup(context)
+        }
+      }
+    },
+
+    setGroupHeight() {
+      const groupContent = this.$refs['group-content']
+
+      if (groupContent) {
+        const { height } = groupContent.getBoundingClientRect()
+
+        this.groupHeight = height || groupContent.offsetHeight
+      }
     },
   },
 }
 </script>
 
 <style lang="scss">
-.ui-filter-group {
+.ui-filter-group,
+.ui-filter-group-content {
   gap: 12px;
 
   display: flex;
@@ -115,10 +144,10 @@ export default {
 }
 
 .ui-filter-group-header-label {
-  font-size: 12px;
-  font-weight: 600;
   line-height: 16.2px;
+  font-size: $av-font-size-xxs;
   color: $av-solid-fixed-light;
+  font-weight: $av-font-weight-bold;
 
   @include ellipsis();
 }

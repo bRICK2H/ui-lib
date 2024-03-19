@@ -43,6 +43,8 @@
 export default {
   name: 'UiFilterGroup',
 
+  inject: ['stateFilters'],
+
   props: {
     label: {
       type: String,
@@ -82,7 +84,7 @@ export default {
   },
 
   created() {
-    this.findParentContextFilter()
+    this.addGroup()
   },
 
   mounted() {
@@ -90,28 +92,12 @@ export default {
   },
 
   methods: {
-    addGroup(context) {
-      context.groups.push(this.$data)
+    addGroup() {
+      this.stateFilters.groups.push(this.$data)
     },
 
     toggleGroupVisibility() {
       this.isVisibleGroup = !this.isVisibleGroup
-    },
-
-    isParentFilterComponent(ctx) {
-      return ['UiFilters', 'ui-filters'].includes(ctx.$options._componentTag)
-    },
-
-    findParentContextFilter() {
-      let context = this.$parent
-
-      while (!this.isParentFilterComponent(context)) {
-        context = context.$parent
-
-        if (this.isParentFilterComponent(context)) {
-          this.addGroup(context)
-        }
-      }
     },
 
     setGroupHeight() {

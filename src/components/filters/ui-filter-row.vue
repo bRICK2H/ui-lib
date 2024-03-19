@@ -9,6 +9,8 @@
 export default {
   name: 'UiFilterRow',
 
+  inject: ['stateFilters'],
+
   props: {
     propName: {
       type: String,
@@ -32,28 +34,12 @@ export default {
   },
 
   created() {
-    this.findParentContextFilter()
+    this.addFilter()
   },
 
   methods: {
-    addFilter(ctx) {
-      ctx.filters.push(this.row)
-    },
-
-    isParentFilterComponent(ctx) {
-      return ['UiFilters', 'ui-filters'].includes(ctx.$options._componentTag)
-    },
-
-    findParentContextFilter() {
-      let context = this.$parent
-
-      while (!this.isParentFilterComponent(context)) {
-        context = context.$parent
-
-        if (this.isParentFilterComponent(context)) {
-          this.addFilter(context)
-        }
-      }
+    addFilter() {
+      this.stateFilters.filters.push(this.row)
     },
   },
 }

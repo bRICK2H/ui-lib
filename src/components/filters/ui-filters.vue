@@ -55,6 +55,15 @@
 export default {
   name: 'UiFilters',
 
+  provide() {
+    return {
+      stateFilters: {
+        groups: this.groups,
+        filters: this.filters,
+      },
+    }
+  },
+
   model: {
     prop: 'visibleModel',
   },
@@ -211,9 +220,8 @@ export default {
     },
 
     setContentHeight() {
-      if (['', '100%'].includes(this.$el.parentElement.style.height)) {
-        this.contentHeight = '100%'
-
+      // В случае, если у родительского элемента не задано никаких значений высоты, то никаких расчетов высоты для контента фильтров не выполняются, используется внутренняя высота контента.
+      if (this.$el.parentElement.style.height === '') {
         return
       }
 
@@ -266,6 +274,7 @@ export default {
 }
 
 .ui-filter-content {
+  height: 100%;
   gap: 24px;
   padding: 24px;
   margin: 0 0 auto 0;

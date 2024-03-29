@@ -129,8 +129,8 @@ export default {
 
     filterTotals() {
       return this.filters.reduce((acc, row) => {
-        const { name } = row
-        acc[name] = row[name]
+        const { name, value } = row
+        acc[name] = value
 
         return acc
       }, {})
@@ -190,7 +190,7 @@ export default {
 
     clearFilters() {
       for (const row of this.filters) {
-        row[row.name] = row.default
+        row.value = row.default
       }
 
       for (const group of this.groups) {

@@ -1,7 +1,7 @@
 <template>
   <!-- Содержимое фильтра -->
   <div class="ui-filter-row">
-    <slot v-bind="{ row }" />
+    <slot v-bind="row" />
   </div>
 </template>
 
@@ -13,23 +13,31 @@ export default {
 
   props: {
     propName: {
-      type: String,
+      type: [String, Array],
       required: true,
     },
 
     defaultValue: {
-      type: null,
-      default: null,
+      type: Object,
+      default: () => ({}),
     },
   },
 
   data() {
+    const rows = Array.isArray(this.propName) ? this.propName : [this.propName]
+
     return {
-      row: {
-        name: this.propName,
-        default: this.defaultValue,
-        [this.propName]: this.defaultValue,
-      },
+      row: rows.reduce((acc, name) => {
+        const defaultValue = this.defaultValue[name] ?? null
+
+        acc[name] = {
+          name,
+          value: defaultValue,
+          default: defaultValue,
+        }
+
+        return acc
+      }, {}),
     }
   },
 
@@ -39,7 +47,9 @@ export default {
 
   methods: {
     addFilter() {
-      this.stateFilters.filters.push(this.row)
+      for (const item in this.row) {
+        this.stateFilters.filters.push(this.row[item])
+      }
     },
   },
 }

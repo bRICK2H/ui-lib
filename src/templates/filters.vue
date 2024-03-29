@@ -15,49 +15,49 @@
         @clear-filters="clear"
       >
         <ui-filter-row
-          v-slot="{ row }"
+          v-slot="{ checkbox }"
           prop-name="checkbox"
-          :default-value="false"
+          :default-value="{ checkbox: false }"
         >
           <ui-checkbox
             label="Чекбокс"
-            :value="row.checkbox"
-            :checked="row.checkbox"
-            @change="(event) => (row.checkbox = event.target.checked)"
+            :value="checkbox.value"
+            :checked="checkbox.value"
+            @change="(event) => (checkbox.value = event.target.checked)"
           />
         </ui-filter-row>
 
         <ui-filter-row
-          v-slot="{ row }"
+          v-slot="{ input }"
           prop-name="input"
         >
           <input
             type="text"
-            :value="row.input"
-            @input="(event) => (row.input = event.target.value)"
+            :value="input.value"
+            @input="(event) => (input.value = event.target.value)"
           />
         </ui-filter-row>
 
         <ui-filter-group label="Компьютеры">
           <ui-filter-row
-            v-slot="{ row }"
+            v-slot="{ radio }"
             prop-name="radio"
-            :default-value="false"
+            :default-value="{ radio: false }"
           >
             <ui-radio
               label="Радио"
-              :value="row.radio"
-              :checked="row.radio"
-              @change="(event) => (row.radio = event.target.checked)"
+              :value="radio.value"
+              :checked="radio.value"
+              @change="(event) => (radio.value = event.target.checked)"
             />
           </ui-filter-row>
 
           <ui-filter-row
-            v-slot="{ row }"
+            v-slot="{ input2 }"
             prop-name="input2"
           >
             <input
-              v-model="row.input2"
+              v-model="input2.value"
               type="text"
             />
           </ui-filter-row>
@@ -83,49 +83,49 @@
         @clear-filters="clear"
       >
         <ui-filter-row
-          v-slot="{ row }"
+          v-slot="{ checkbox }"
           prop-name="checkbox"
-          :default-value="false"
+          :default-value="{ checkbox: false }"
         >
           <ui-checkbox
             label="Чекбокс"
-            :value="row.checkbox"
-            :checked="row.checkbox"
-            @change="(event) => (row.checkbox = event.target.checked)"
+            :value="checkbox.value"
+            :checked="checkbox.value"
+            @change="(event) => (checkbox.value = event.target.checked)"
           />
         </ui-filter-row>
 
         <ui-filter-row
-          v-slot="{ row }"
+          v-slot="{ input }"
           prop-name="input"
         >
           <input
             type="text"
-            :value="row.input"
-            @input="(event) => (row.input = event.target.value)"
+            :value="input.value"
+            @input="(event) => (input.value = event.target.value)"
           />
         </ui-filter-row>
 
         <ui-filter-group label="Компьютеры">
           <ui-filter-row
-            v-slot="{ row }"
+            v-slot="{ radio }"
             prop-name="radio"
-            :default-value="false"
+            :default-value="{ radio: false }"
           >
             <ui-radio
               label="Радио"
-              :value="row.radio"
-              :checked="row.radio"
-              @change="(event) => (row.radio = event.target.checked)"
+              :value="radio.value"
+              :checked="radio.value"
+              @change="(event) => (radio.value = event.target.checked)"
             />
           </ui-filter-row>
 
           <ui-filter-row
-            v-slot="{ row }"
+            v-slot="{ input2 }"
             prop-name="input2"
           >
             <input
-              v-model="row.input2"
+              v-model="input2.value"
               type="text"
             />
           </ui-filter-row>

@@ -3,57 +3,59 @@
     :title="title()"
     :class="['ui-checkbox-wrapper', { disabled }]"
   >
-    <span
-      v-if="(label && labelSide === 'left') || $slots['label-left']"
-      :class="['ui-checkbox-label', 'left', size, { disabled }]"
-    >
-      <slot name="label-left">
-        {{ label }}
-      </slot>
-    </span>
+    <slot>
+      <span
+        v-if="(label && labelSide === 'left') || $slots['label-left']"
+        :class="['ui-checkbox-label', 'left', size, { disabled }]"
+      >
+        <slot name="label-left">
+          {{ label }}
+        </slot>
+      </span>
 
-    <div
-      :class="[
-        'ui-checkbox',
-        `ui-checkbox--${size}`,
-        {
-          size,
-          disabled,
-          indeterminate,
-          selected: isSelected,
-          unselected: !isSelected,
-        },
-      ]"
-    >
-      <ui-icon
-        v-if="isSelected"
-        name="selected"
-        :size="currentSize"
-      />
+      <div
+        :class="[
+          'ui-checkbox',
+          `ui-checkbox--${size}`,
+          {
+            size,
+            disabled,
+            indeterminate,
+            selected: isSelected,
+            unselected: !isSelected,
+          },
+        ]"
+      >
+        <ui-icon
+          v-if="isSelected"
+          name="selected"
+          :size="currentSize"
+        />
 
-      <ui-icon
-        v-if="indeterminate && !isSelected"
-        name="indeterminate"
-        :size="currentSize"
-      />
-    </div>
+        <ui-icon
+          v-if="indeterminate && !isSelected"
+          name="indeterminate"
+          :size="currentSize"
+        />
+      </div>
 
-    <span
-      v-if="(label && labelSide === 'right') || $slots['label-right']"
-      :class="['ui-checkbox-label', 'right', size, { disabled }]"
-    >
-      <slot name="label-right">
-        {{ label }}
-      </slot>
-    </span>
-    <span
-      v-else-if="$slots.default"
-      :class="['ui-checkbox-label', 'right', size, { disabled }]"
-    >
-      <slot>
-        {{ label }}
-      </slot>
-    </span>
+      <span
+        v-if="(label && labelSide === 'right') || $slots['label-right']"
+        :class="['ui-checkbox-label', 'right', size, { disabled }]"
+      >
+        <slot name="label-right">
+          {{ label }}
+        </slot>
+      </span>
+      <span
+        v-else-if="$slots.default"
+        :class="['ui-checkbox-label', 'right', size, { disabled }]"
+      >
+        <slot>
+          {{ label }}
+        </slot>
+      </span>
+    </slot>
 
     <component
       :is="componentName"

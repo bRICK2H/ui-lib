@@ -4,6 +4,7 @@
     class="ui-scrollbar"
     :class="{ 'ui-scrollbar--textarea': hasTextareaContent }"
     :style="styles"
+    v-on="$listeners"
   >
     <!-- Scrollbar main -->
     <main class="scrollbar-main">

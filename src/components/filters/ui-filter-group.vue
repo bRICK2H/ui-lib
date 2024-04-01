@@ -154,6 +154,7 @@ export default {
     flex-direction: column;
     overflow: hidden;
     transition: 0.2s ease;
+    font-weight: $av-font-weight-normal;
   }
 
   &.collapsible {

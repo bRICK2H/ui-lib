@@ -1,7 +1,14 @@
 <template>
   <section
+    ref="filter"
     class="ui-filter"
-    :style="filterStyles"
+    :style="[
+      filterStyles,
+      {
+        '--header-height': `${headerHeight}px`,
+        '--footer-height': `${footerHeight}px`,
+      },
+    ]"
   >
     <!-- Шапка фильтра -->
     <header class="ui-filter-header">
@@ -16,22 +23,20 @@
           name="chevron-left"
           size="16"
         />
+
         Свернуть
       </ui-button>
     </header>
 
     <!-- Содержимое фильтра -->
-    <div
-      ref="filter-container"
-      class="ui-filter-container"
-      :style="filterContentHeight"
+    <ui-scrollbar
+      v-if="isVisibleContent"
+      :height="filterContentHeight"
     >
-      <ui-scrollbar v-if="isVisibleContent">
-        <div class="ui-filter-content">
-          <slot />
-        </div>
-      </ui-scrollbar>
-    </div>
+      <div class="ui-filter-content">
+        <slot />
+      </div>
+    </ui-scrollbar>
 
     <!-- Подвал фильтра -->
     <footer class="ui-filter-footer">
@@ -48,7 +53,7 @@
       </ui-button>
 
       <!-- Применить -->
-      <ui-button @click="applyFilters">Применить</ui-button>
+      <ui-button @click="applyFilters"> Применить </ui-button>
     </footer>
   </section>
 </template>
@@ -120,7 +125,10 @@ export default {
   data: () => ({
     groups: [],
     filters: [],
-    contentHeight: -1,
+    maxHeight: 0,
+    offsetTop: 0,
+    headerHeight: 64,
+    footerHeight: 80,
     isVisibleContent: false,
   }),
 
@@ -144,15 +152,18 @@ export default {
 
       return {
         height,
+        maxHeight: this.maxHeight === 0 ? 'auto' : `${this.maxHeight}px`,
         opacity: this.isVisibleFilter ? 1 : 0,
         width: this.isVisibleFilter ? width : 0,
+        minWidth: this.isVisibleFilter ? width : 0,
       }
     },
 
     filterContentHeight() {
-      return {
-        height: this.contentHeight,
-      }
+      return (
+        (this.height > 0 ? this.height : this.maxHeight) -
+        (this.headerHeight + this.footerHeight)
+      )
     },
   },
 
@@ -166,15 +177,16 @@ export default {
           return
         }
 
-        this.setContentHeight()
-
         // Таймаут ждет завершение анимации .2s для контента
-        setTimeout(() => (this.isVisibleContent = true), 200)
+        setTimeout(() => {
+          this.isVisibleContent = true
+        }, 200)
       },
     },
   },
 
   mounted() {
+    this.setMaxFilterHeight()
     this.checkDuplicateFilterNames()
   },
 
@@ -229,19 +241,17 @@ export default {
       }
     },
 
-    setContentHeight() {
-      // В случае, если у родительского элемента не задано никаких значений высоты, то никаких расчетов высоты для контента фильтров не выполняются, используется внутренняя высота контента.
-      if (this.$el.parentElement.style.height === '') {
+    async setMaxFilterHeight() {
+      await this.$nextTick()
+
+      if (this.height > 0) {
         return
       }
 
-      const filterContent = this.$refs['filter-container']
+      const { offsetTop } = this.$refs['filter']
 
-      if (filterContent) {
-        const { height } = filterContent.getBoundingClientRect()
-
-        this.contentHeight = `${height || filterContent.offsetHeight}px`
-      }
+      this.offsetTop = offsetTop
+      this.maxHeight = window.innerHeight - offsetTop
     },
 
     getFilterSize(size) {
@@ -252,6 +262,9 @@ export default {
 </script>
 
 <style lang="scss">
+$headerHeight: var(--header-height);
+$footerHeight: var(--footer-height);
+
 .ui-filter {
   display: flex;
   flex-direction: column;
@@ -272,25 +285,23 @@ export default {
 }
 
 .ui-filter-header {
-  height: 64px;
-  min-height: 64px;
+  height: $headerHeight;
+  min-height: $headerHeight;
   padding: 0 24px;
   border-bottom: 1px solid $av-solid-brand-bright;
 }
 
 .ui-filter-footer {
+  height: $footerHeight;
   padding: 24px;
   border-top: 1px solid $av-solid-brand-bright;
 }
 
-.ui-filter-container {
-  height: 100%;
-  padding: 24px;
-}
-
 .ui-filter-content {
   gap: 24px;
+
   display: flex;
+  padding: 24px;
   flex-direction: column;
 }
 </style>

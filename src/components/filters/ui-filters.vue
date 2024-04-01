@@ -22,12 +22,14 @@
 
     <!-- Содержимое фильтра -->
     <div
-      ref="filter-content"
-      class="ui-filter-content"
+      ref="filter-container"
+      class="ui-filter-container"
       :style="filterContentHeight"
     >
       <ui-scrollbar v-if="isVisibleContent">
-        <slot />
+        <div class="ui-filter-content">
+          <slot />
+        </div>
       </ui-scrollbar>
     </div>
 
@@ -233,7 +235,7 @@ export default {
         return
       }
 
-      const filterContent = this.$refs['filter-content']
+      const filterContent = this.$refs['filter-container']
 
       if (filterContent) {
         const { height } = filterContent.getBoundingClientRect()
@@ -281,12 +283,13 @@ export default {
   border-top: 1px solid $av-solid-brand-bright;
 }
 
-.ui-filter-content {
+.ui-filter-container {
   height: 100%;
-  gap: 24px;
   padding: 24px;
-  margin: 0 0 auto 0;
+}
 
+.ui-filter-content {
+  gap: 24px;
   display: flex;
   flex-direction: column;
 }

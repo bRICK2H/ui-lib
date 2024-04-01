@@ -1,5 +1,5 @@
 <template>
-  <div class="ui-filter-group">
+  <div :class="['ui-filter-group', { collapsible }]">
     <!-- Шапка группы -->
     <header class="ui-filter-group-header">
       <ui-icon
@@ -15,17 +15,19 @@
         {{ label }}
       </span>
 
-      <span class="ui-filter-group-header-line" />
+      <template v-if="collapsible">
+        <span class="ui-filter-group-header-line" />
 
-      <ui-button
-        variant="ghost-primary"
-        @click="toggleGroupVisibility"
-      >
-        <ui-icon
-          size="16"
-          :name="iconGroupName"
-        />
-      </ui-button>
+        <ui-button
+          variant="ghost-primary"
+          @click="toggleGroupVisibility"
+        >
+          <ui-icon
+            size="16"
+            :name="iconGroupName"
+          />
+        </ui-button>
+      </template>
     </header>
 
     <!-- Содержимое группы -->
@@ -59,6 +61,11 @@ export default {
     iconSize: {
       type: Number,
       default: 16,
+    },
+
+    collapsible: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -114,38 +121,52 @@ export default {
 </script>
 
 <style lang="scss">
-.ui-filter-group,
-.ui-filter-group-content {
-  gap: 12px;
-
+.ui-filter-group {
+  gap: 8px;
   display: flex;
   flex-direction: column;
-}
 
-.ui-filter-group-header {
-  gap: 8px;
+  & .ui-filter-group-header {
+    gap: 8px;
 
-  display: flex;
-  align-items: center;
-}
+    display: flex;
+    align-items: center;
+  }
 
-.ui-filter-group-header-label {
-  line-height: 16.2px;
-  font-size: $av-font-size-xxs;
-  color: $av-solid-fixed-light;
-  font-weight: $av-font-weight-bold;
+  & .ui-filter-group-header-label {
+    line-height: 16.2px;
+    font-size: $av-font-size-s;
+    font-weight: $av-font-weight-normal;
+    color: $av-solid-fixed-light;
 
-  @include ellipsis();
-}
+    @include ellipsis();
+  }
 
-.ui-filter-group-header-line {
-  flex: 1 1 50%;
-  height: 1px;
-  background-color: $av-solid-brand-bright;
-}
+  & .ui-filter-group-header-line {
+    flex: 1 1 50%;
+    height: 1px;
+    background-color: $av-solid-brand-bright;
+  }
 
-.ui-filter-group-content {
-  overflow: hidden;
-  transition: 0.2s ease;
+  & .ui-filter-group-content {
+    gap: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: 0.2s ease;
+  }
+
+  &.collapsible {
+    gap: 12px;
+
+    & .ui-filter-group-content {
+      gap: 12px;
+    }
+
+    & .ui-filter-group-header-label {
+      font-size: $av-font-size-xxs;
+      font-weight: $av-font-weight-bold;
+    }
+  }
 }
 </style>

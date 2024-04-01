@@ -14,31 +14,36 @@
         @apply-filters="apply"
         @clear-filters="clear"
       >
-        <ui-filter-row
-          v-slot="{ checkbox }"
-          prop-name="checkbox"
-          :default-value="{ checkbox: false }"
-        >
-          <ui-checkbox
-            label="Чекбокс"
-            :value="checkbox.value"
-            :checked="checkbox.value"
-            @change="(event) => (checkbox.value = event.target.checked)"
-          />
-        </ui-filter-row>
+        <ui-filter-group label="Первая группа">
+          <ui-filter-row
+            v-slot="{ checkbox }"
+            prop-name="checkbox"
+            :default-value="{ checkbox: false }"
+          >
+            <ui-checkbox
+              label="Чекбокс"
+              :value="checkbox.value"
+              :checked="checkbox.value"
+              @change="(event) => (checkbox.value = event.target.checked)"
+            />
+          </ui-filter-row>
 
-        <ui-filter-row
-          v-slot="{ input }"
-          prop-name="input"
-        >
-          <input
-            type="text"
-            :value="input.value"
-            @input="(event) => (input.value = event.target.value)"
-          />
-        </ui-filter-row>
+          <ui-filter-row
+            v-slot="{ input }"
+            prop-name="input"
+          >
+            <input
+              type="text"
+              :value="input.value"
+              @input="(event) => (input.value = event.target.value)"
+            />
+          </ui-filter-row>
+        </ui-filter-group>
 
-        <ui-filter-group label="Компьютеры">
+        <ui-filter-group
+          label="Вторая группа"
+          collapsible
+        >
           <ui-filter-row
             v-slot="{ radio }"
             prop-name="radio"
@@ -63,9 +68,10 @@
           </ui-filter-row>
         </ui-filter-group>
 
-        <ui-filter-group label="Число"> 3 </ui-filter-group>
+        <ui-filter-group label="Третья группа"> 3 </ui-filter-group>
 
         <ui-filter-group
+          collapsible
           label="Очень длинное описание лэйбла"
           icon-name="cross"
         >

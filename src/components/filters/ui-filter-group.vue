@@ -135,7 +135,7 @@ export default {
 
   & .ui-filter-group-header-label {
     line-height: 16.2px;
-    font-size: $av-font-size-s;
+    font-size: $av-font-size-xxs;
     font-weight: $av-font-weight-normal;
     color: $av-solid-fixed-light;
 
@@ -164,7 +164,6 @@ export default {
     }
 
     & .ui-filter-group-header-label {
-      font-size: $av-font-size-xxs;
       font-weight: $av-font-weight-bold;
     }
   }

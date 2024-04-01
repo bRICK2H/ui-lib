@@ -59,6 +59,8 @@
 </template>
 
 <script>
+import { throttle } from 'lodash'
+
 export default {
   name: 'UiFilters',
 
@@ -174,8 +176,20 @@ export default {
         await this.$nextTick()
 
         if (!this.isVisibleFilter) {
+          window.removeEventListener('resize', this.setMaxFilterHeight)
           return
         }
+
+        const width = window.innerWidth
+
+        this.setMaxFilterHeight()
+        window.addEventListener('resize', (event) => {
+          if (width !== event.target.innerWidth) {
+            return
+          }
+
+          this.setMaxFilterHeight()
+        })
 
         // Таймаут ждет завершение анимации .2s для контента
         setTimeout(() => {
@@ -186,7 +200,6 @@ export default {
   },
 
   mounted() {
-    this.setMaxFilterHeight()
     this.checkDuplicateFilterNames()
   },
 
@@ -241,9 +254,7 @@ export default {
       }
     },
 
-    async setMaxFilterHeight() {
-      await this.$nextTick()
-
+    setMaxFilterHeight: throttle(function () {
       if (this.height > 0) {
         return
       }
@@ -252,7 +263,7 @@ export default {
 
       this.offsetTop = offsetTop
       this.maxHeight = window.innerHeight - offsetTop
-    },
+    }, 200),
 
     getFilterSize(size) {
       return size === -1 ? '100%' : `${size}px`

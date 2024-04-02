@@ -12,7 +12,7 @@
   >
     <!-- Шапка фильтра -->
     <header class="ui-filter-header">
-      <h3>Фильтры</h3>
+      <h3>Фильтр</h3>
 
       <!-- Свернуть -->
       <ui-button
@@ -219,8 +219,8 @@ export default {
   },
 
   mounted() {
+    this.setDefaultFilterState()
     this.checkDuplicateFilterNames()
-    this.primaryFilterState = structuredClone(this.currentFilterState)
   },
 
   methods: {
@@ -245,6 +245,15 @@ export default {
       }
 
       this.$emit('clear-filters', this.currentFilterState)
+    },
+
+    setDefaultFilterState() {
+      this.primaryFilterState = this.filters.reduce((acc, row) => {
+        const { name } = row
+        acc[name] = row.default
+
+        return acc
+      }, {})
     },
 
     checkDuplicateFilterNames() {

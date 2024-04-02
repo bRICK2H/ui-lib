@@ -39,6 +39,7 @@
     <footer class="ui-filter-footer">
       <!-- Сбросить все -->
       <ui-button
+        v-if="isVisibleClearButton"
         variant="text-primary"
         @click="clearFilters"
       >
@@ -50,13 +51,19 @@
       </ui-button>
 
       <!-- Применить -->
-      <ui-button @click="applyFilters"> Применить </ui-button>
+      <ui-button
+        class="ui-filter-footer-action-apply"
+        @click="applyFilters"
+      >
+        Применить
+      </ui-button>
     </footer>
   </section>
 </template>
 
 <script>
-import { throttle } from 'lodash'
+import isEqual from 'lodash/isEqual'
+import throttle from 'lodash/throttle'
 
 export default {
   name: 'UiFilters',
@@ -144,6 +151,7 @@ export default {
     filters: [],
     maxHeight: 0,
     offsetTop: 0,
+    primaryFilterState: {},
   }),
 
   computed: {
@@ -151,7 +159,11 @@ export default {
       return this.visibleModel ?? this.visible
     },
 
-    filterTotals() {
+    isVisibleClearButton() {
+      return !isEqual(this.primaryFilterState, this.currentFilterState)
+    },
+
+    currentFilterState() {
       return this.filters.reduce((acc, row) => {
         const { name, value } = row
         acc[name] = value
@@ -195,8 +207,8 @@ export default {
         const width = window.innerWidth
 
         this.setMaxFilterHeight()
-        window.addEventListener('resize', (event) => {
-          if (width !== event.target.innerWidth) {
+        window.addEventListener('resize', ({ target }) => {
+          if (width !== target.innerWidth) {
             return
           }
 
@@ -208,12 +220,13 @@ export default {
 
   mounted() {
     this.checkDuplicateFilterNames()
+    this.primaryFilterState = structuredClone(this.currentFilterState)
   },
 
   methods: {
     applyFilters() {
       this.closeFilter()
-      this.$emit('apply-filters', this.filterTotals)
+      this.$emit('apply-filters', this.currentFilterState)
     },
 
     closeFilter() {
@@ -231,7 +244,7 @@ export default {
         group.isVisibleGroup = true
       }
 
-      this.$emit('clear-filters', this.filterTotals)
+      this.$emit('clear-filters', this.currentFilterState)
     },
 
     checkDuplicateFilterNames() {
@@ -289,7 +302,7 @@ $footerHeight: var(--footer-height);
   justify-content: space-between;
 
   overflow: hidden;
-  transition: 0.2s ease;
+  transition: 0.1s ease;
   background: $av-fixed-white;
   border-left: 1px solid $av-solid-brand-bright;
   border-right: 1px solid $av-solid-brand-bright;
@@ -309,17 +322,21 @@ $footerHeight: var(--footer-height);
   border-bottom: 1px solid $av-solid-brand-bright;
 }
 
-.ui-filter-footer {
-  height: $footerHeight;
-  padding: 24px;
-  border-top: 1px solid $av-solid-brand-bright;
-}
-
 .ui-filter-content {
   gap: 24px;
 
   display: flex;
   padding: 24px;
   flex-direction: column;
+}
+
+.ui-filter-footer {
+  height: $footerHeight;
+  padding: 24px;
+  border-top: 1px solid $av-solid-brand-bright;
+}
+
+.ui-filter-footer-action-apply {
+  margin: 0 0 0 auto;
 }
 </style>

@@ -29,10 +29,7 @@
     </header>
 
     <!-- Содержимое фильтра -->
-    <ui-scrollbar
-      v-if="isVisibleContent"
-      :height="filterContentHeight"
-    >
+    <ui-scrollbar :height="filterContentHeight">
       <div class="ui-filter-content">
         <slot />
       </div>
@@ -105,6 +102,24 @@ export default {
     },
 
     /**
+     * ? Высота верхнего меню фильтра
+     * - все переданные значения переводятся в пиксели
+     */
+    headerHeight: {
+      type: Number,
+      default: 64,
+    },
+
+    /**
+     * ? Высота нижнего меню фильтра
+     * - все переданные значения переводятся в пиксели
+     */
+    footerHeight: {
+      type: Number,
+      default: 64,
+    },
+
+    /**
      * ? Видимость фильтра в ручную
      * - для открытия необходимо прокинуть в атрибут visible true
      * - для закрытия необходимо обработать событие close
@@ -129,9 +144,6 @@ export default {
     filters: [],
     maxHeight: 0,
     offsetTop: 0,
-    headerHeight: 64,
-    footerHeight: 80,
-    isVisibleContent: false,
   }),
 
   computed: {
@@ -190,11 +202,6 @@ export default {
 
           this.setMaxFilterHeight()
         })
-
-        // Таймаут ждет завершение анимации .2s для контента
-        setTimeout(() => {
-          this.isVisibleContent = true
-        }, 200)
       },
     },
   },

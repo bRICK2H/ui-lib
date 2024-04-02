@@ -17,11 +17,11 @@ export default {
   props: {
     value: {
       type: [String, Number, Object],
-      required: true,
+      default: '',
     },
 
     modelValue: {
-      type: [String, Number, Object, Array],
+      type: [String, Number, Object, Array, Boolean],
       required: true,
     },
 

@@ -21,7 +21,7 @@ export default {
     },
 
     /**
-     * Значение по умолчанию (из компонента по умолчанию будет null)
+     * Значение по умолчанию (из компонента по умолчанию будет undefined)
      */
     defaultValue: {
       type: Object,
@@ -42,7 +42,7 @@ export default {
 
     return {
       row: rows.reduce((acc, name) => {
-        const defaultValue = this.defaultValue[name] ?? null
+        const defaultValue = this.defaultValue[name]
         const presetValue = this.presetValue[name] ?? defaultValue
 
         acc[name] = {

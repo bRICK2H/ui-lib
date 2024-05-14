@@ -2,7 +2,7 @@
   <span
     :title="title"
     :style="{ '--color': currentColor }"
-    class="ui-icon-container"
+    class="vpc-icon-container"
     v-on="listeners"
   >
     <svg
@@ -10,7 +10,8 @@
       :height="iconHeight"
     >
       <use
-        :style="{ color }"
+        ref="use"
+        :y="offsetY"
         :href="`${require(`@/assets/icons/${iconName}.svg`)}#${name}`"
       ></use>
     </svg>
@@ -22,32 +23,49 @@ import style from '@/assets/styles/globally/_export.modules.scss'
 
 export default {
   name: 'UiIcon',
+
   props: {
     name: {
       type: String,
       required: true,
     },
+
     color: {
       type: String,
       default: '',
     },
+
     width: {
       type: [String, Number],
       default: 16,
     },
+
     height: {
       type: [String, Number],
       default: 16,
     },
+
     size: {
       type: [String, Number],
       default: 0,
     },
+
     title: {
       type: String,
       default: '',
     },
+
+    center: {
+      type: Boolean,
+      default: false,
+    },
   },
+
+  data: () => ({
+    offsetY: 0,
+    resizeObserver: null,
+  }),
+
   computed: {
     listeners() {
       return this.$listeners
@@ -70,9 +88,52 @@ export default {
         return this.color
       }
 
-      return this.$parent.$options._componentTag === 'ui-button'
+      return this.$parent.$options._componentTag === 'el-button'
         ? 'inherit'
         : style.colorBlackLightest
+    },
+  },
+
+  mounted() {
+    this.setResizeObserver()
+  },
+
+  destroyed() {
+    this.removeResizeObserver()
+  },
+
+  methods: {
+    setOffset(ref) {
+      if (!ref) {
+        return
+      }
+
+      const { width, height } = ref.getBoundingClientRect()
+
+      if (width <= height) {
+        return
+      }
+
+      this.offsetY = this.center ? (width - height) / 2 : 0
+    },
+
+    removeResizeObserver() {
+      if (!this.resizeObserver || !this.center) {
+        return
+      }
+
+      this.resizeObserver.disconnect()
+    },
+
+    setResizeObserver() {
+      const ref = this.$refs['use']
+
+      if (!ref || !this.center) {
+        return
+      }
+
+      this.resizeObserver = new ResizeObserver(() => this.setOffset(ref))
+      this.resizeObserver.observe(ref)
     },
   },
 }
@@ -81,8 +142,8 @@ export default {
 <style lang="scss">
 $color: var(--color);
 
-.ui-icon-container {
-  display: flex;
+.vpc-icon-container {
+  display: inline-flex;
 
   & use {
     color: $color;

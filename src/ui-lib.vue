@@ -7,12 +7,13 @@
 
   <!-- </ui-scrollbar> -->
 
-  <div style="height: 100%; padding: 20px">
+  <div style="height: 100vh">
+    <VImageZoom />
     <!-- <VInputButton /> -->
 
     <!-- <VTableContainer /> -->
 
-    <v-template-filters />
+    <!-- <v-template-filters /> -->
 
     <!-- <table
       style="
@@ -57,6 +58,7 @@
 </template>
 
 <script>
+import VImageZoom from '@/templates/image-zoom.vue'
 import VTableContainer from '@/templates/table/index.vue'
 import UiExampleLoader from '@/components/_global/loader/example'
 // import VButtonTemplate from './components/button/templates'
@@ -68,7 +70,8 @@ import VTemplateFilters from '@/templates/filters.vue'
 export default {
   name: 'UiLib',
   components: {
-    VTemplateFilters,
+    VImageZoom,
+    // VTemplateFilters,
     // IParent,
     // VTableContainer,
     // VInputButton,
@@ -216,7 +219,7 @@ body {
 }
 
 .wrapper {
-  padding: 20px;
+  // padding: 20px;
   display: flex;
   background: lightblue;
 

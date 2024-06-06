@@ -12,12 +12,26 @@ export default {
   inject: ['stateFilters'],
 
   props: {
+    /**
+     * Название свойства (можно передавать строку или группу строк)
+     */
     propName: {
       type: [String, Array],
       required: true,
     },
 
+    /**
+     * Значение по умолчанию (из компонента по умолчанию будет undefined)
+     */
     defaultValue: {
+      type: Object,
+      default: () => ({}),
+    },
+
+    /**
+     * Предустановленное значение (значение, которые было определено внешними факторами)
+     */
+    presetValue: {
       type: Object,
       default: () => ({}),
     },
@@ -28,11 +42,12 @@ export default {
 
     return {
       row: rows.reduce((acc, name) => {
-        const defaultValue = this.defaultValue[name] ?? null
+        const defaultValue = this.defaultValue[name]
+        const presetValue = this.presetValue[name] ?? defaultValue
 
         acc[name] = {
           name,
-          value: defaultValue,
+          value: presetValue,
           default: defaultValue,
         }
 

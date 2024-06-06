@@ -5,7 +5,10 @@
   >
     <slot>
       <span
-        v-if="(label && labelSide === 'left') || $slots['label-left']"
+        v-if="
+          (label && labelSide === 'left') ||
+          getSlotTextContent($slots['label-left'])
+        "
         :class="['ui-checkbox-label', 'left', size, { disabled }]"
       >
         <slot name="label-left">
@@ -40,7 +43,10 @@
       </div>
 
       <span
-        v-if="(label && labelSide === 'right') || $slots['label-right']"
+        v-if="
+          (label && labelSide === 'right') ||
+          getSlotTextContent($slots['label-right'])
+        "
         :class="['ui-checkbox-label', 'right', size, { disabled }]"
       >
         <slot name="label-right">
@@ -175,6 +181,10 @@ export default {
     },
 
     getSlotTextContent(node) {
+      if (!node) {
+        return ''
+      }
+
       return node
         .map((childNode) => {
           return childNode.children

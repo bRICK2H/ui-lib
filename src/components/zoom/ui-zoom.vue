@@ -4,19 +4,21 @@
     class="ui-zoom-viewport"
   >
     <img
-      :alt="alt"
       ref="image"
+      :alt="alt"
       :style="[size, cursor, transform]"
       class="ui-zoom-image"
       src="@/assets/images/roja.png"
       @wheel="zoom"
-      @mousemove.prevent="grabMove"
       @mousedown.prevent="grabStart"
+      @mousemove.prevent="throttleGrabMove"
     />
   </div>
 </template>
 
 <script>
+import { throttle } from 'lodash'
+
 export default {
   name: 'UiZoom',
 
@@ -43,8 +45,10 @@ export default {
   },
 
   data: () => ({
-    x: 0,
-    y: 0,
+    current: {
+      x: 0,
+      y: 0,
+    },
     prevent: {
       x: 0,
       y: 0,
@@ -52,6 +56,8 @@ export default {
     scale: 1,
     isGrab: false,
     isMovement: false,
+    image: null,
+    viewport: null,
     resizeObserver: null,
   }),
 
@@ -77,27 +83,28 @@ export default {
 
     transform() {
       return {
-        transform: `translate(${this.x}px, ${this.y}px) scale(${this.scale})`,
+        transform: `translate(${this.current.x}px, ${this.current.y}px) scale(${this.scale})`,
       }
     },
   },
 
   watch: {
-    scale() {
-      this.allowMovement()
+    scale: {
+      immediate: true,
+      handler: 'allowMovement',
     },
   },
 
-  mounted() {
-    const observer = new ResizeObserver(this.allowMovement)
+  created() {
+    this.throttleGrabMove = throttle(this.grabMove, 10)
+  },
 
-    this.resizeObserver = observer.observe(this.$refs['viewport'])
-    document.addEventListener('mouseup', this.grabEnd)
+  mounted() {
+    this.registerEvents()
   },
 
   destroyed() {
-    this.resizeObserver?.disconnect()
-    document.removeEventListener('mouseup', this.grabEnd)
+    this.destroyEvents()
   },
 
   methods: {
@@ -105,38 +112,42 @@ export default {
       const delta = Math.abs(event.wheelDelta) === event.wheelDelta ? 1 : 0
 
       if (delta === 1) {
+        const xs =
+          (event.clientX - this.viewport.left - this.current.x) / this.scale
+        const ys =
+          (event.clientY - this.viewport.top - this.current.y) / this.scale
+
         this.scale *= 1.2
+
+        this.current.x = event.clientX - xs * this.scale
+        this.current.y = event.clientY - ys * this.scale
       } else {
         this.scale = this.scale > 1.2 ? (this.scale /= 1.2) : 1
-      }
 
-      // this.x = event.clientX
-      // this.y = event.clientY
+        this.current.x = this.scale > 1 ? this.current.x / this.scale : 0
+        this.current.y = this.scale > 1 ? this.current.y / this.scale : 0
+      }
     },
 
-    async allowMovement() {
-      await this.$nextTick()
+    // zoom(event) {
+    //   const delta = Math.abs(event.wheelDelta) === event.wheelDelta ? 1 : 0
+    //   const xs =
+    //     (event.clientX - this.viewport.left - this.current.x) / this.scale
+    //   const ys =
+    //     (event.clientY - this.viewport.top - this.current.y) / this.scale
 
-      const imageEl = this.$refs['image']
-      const viewportEl = this.$refs['viewport']
+    //   if (delta === 1) {
+    //     this.scale *= 1.2
+    //   } else {
+    //     this.scale = this.scale > 1.2 ? (this.scale /= 1.2) : 1
+    //   }
 
-      if (!imageEl || !viewportEl) {
-        return
-      }
+    //   this.current.x = event.clientX - xs * this.scale
+    //   this.current.y = event.clientY - ys * this.scale
+    // },
 
-      const image = imageEl.getBoundingClientRect()
-      const viewport = viewportEl.getBoundingClientRect()
-
-      this.isMovement = viewport.y > image.y || viewport.x > image.x
-    },
-
-    grabMove(event) {
-      if (!this.isGrab || !this.isMovement) {
-        return
-      }
-
-      // this.x = event.clientX - this.prevent.x
-      this.y = event.clientY - this.prevent.y
+    grabEnd() {
+      this.isGrab = false
     },
 
     grabStart(event) {
@@ -144,14 +155,108 @@ export default {
         return
       }
 
-      this.prevent.x = event.clientX
-      this.prevent.y = event.clientY
+      this.prevent.x = event.clientX - this.current.x
+      this.prevent.y = event.clientY - this.current.y
 
       this.isGrab = true
     },
 
-    grabEnd() {
-      this.isGrab = false
+    grabMove(event) {
+      if (!this.isGrab || !this.isMovement) {
+        return
+      }
+
+      const immovableX = Math.floor(
+        (this.viewport.width - this.image.width) / 2
+      )
+      const immovableY = Math.floor(
+        (this.viewport.height - this.image.height) / 2
+      )
+
+      /**
+       * 1. Необходимо доработать момент, в случае если уходит за границы одна сторона. На текущий момент она склеивается и картинка уже не двигается
+       * 2. Подумать, как можно улучшить сам зум, в частности при возврате
+       * 3. Подумать над шириной, кому лучше задавать, картинке или же вьюпорту
+       */
+
+      if (
+        this.viewport.left > this.image.left ||
+        this.viewport.right < this.image.right
+      ) {
+        this.current.x = event.clientX - this.prevent.x
+
+        // LEFT
+        if (immovableX >= this.current.x) {
+          console.log('left')
+          this.current.x = immovableX
+        }
+
+        // RIGHT
+        if (Math.abs(immovableX) <= this.current.x) {
+          console.log('right')
+          this.current.x = Math.abs(immovableX)
+        }
+      }
+
+      if (
+        this.viewport.top > this.image.top ||
+        this.viewport.bottom < this.image.bottom
+      ) {
+        this.current.y = event.clientY - this.prevent.y
+
+        // UP
+        if (immovableY >= this.current.y) {
+          console.log('up')
+          this.current.y = immovableY
+        }
+
+        // DOWN
+        if (Math.abs(immovableY) <= this.current.y) {
+          console.log('down')
+          this.current.y = Math.abs(immovableY)
+        }
+      }
+    },
+
+    getNode(name) {
+      const node = this.$refs[name]
+
+      return node?.getBoundingClientRect()
+    },
+
+    async allowMovement() {
+      await this.$nextTick()
+
+      this.image = this.getNode('image')
+      this.viewport = this.getNode('viewport')
+
+      if (!this.image || !this.viewport) {
+        return
+      }
+
+      this.isMovement =
+        this.viewport.top > this.image.top ||
+        this.viewport.left > this.image.left ||
+        this.viewport.right < this.image.right ||
+        this.viewport.bottom < this.image.bottom
+    },
+
+    registerEvents() {
+      document.addEventListener('mouseup', this.grabEnd)
+
+      const viewport = this.$refs['viewport']
+
+      if (!viewport) {
+        return
+      }
+
+      this.resizeObserver = new ResizeObserver(this.allowMovement)
+      this.resizeObserver.observe(viewport)
+    },
+
+    destroyEvents() {
+      this.resizeObserver?.disconnect()
+      document.removeEventListener('mouseup', this.grabEnd)
     },
   },
 }
@@ -164,7 +269,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  // overflow: hidden;
+  overflow: hidden;
 
   border: 1px solid blue;
 }

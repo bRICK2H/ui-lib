@@ -8,7 +8,7 @@
       :alt="alt"
       :style="[size, cursor, transform]"
       class="ui-zoom-image"
-      src="@/assets/images/map.png"
+      src="@/assets/images/roja.png"
       @mousedown.prevent="mouseEvent"
       @wheel.prevent="mouseWheelEvent"
     />
@@ -54,19 +54,13 @@ export default {
 
   data: function () {
     return {
-      matrix: [1, 0, 0, 1, 0, 0], // current view transform
-      // matrix: {
-      //   0: 1,
-      //   1: 0,
-      //   2: 0,
-      //   3: 1,
-      //   4: 0,
-      //   5: 0,
-      // },
-      scale: 1, // current scale
-      pos: { x: 0, y: 0 }, // current position of origin
       dirty: true,
-      mouse: { x: 0, y: 0, oldX: 0, oldY: 0, button: false },
+      movement: false,
+      scale: 1, // current scale
+      minScale: 1, // min scale
+      matrix: [1, 0, 0, 1, 0, 0], // current view transform
+      pos: { x: 0, y: 0 }, // current position of origin
+      mouse: { x: 0, y: 0, oldX: 0, oldY: 0, grab: false },
     }
   },
 
@@ -79,14 +73,14 @@ export default {
     },
 
     cursor() {
-      if (!this.isMovement) {
+      if (!this.movement) {
         return {
           cursor: 'default',
         }
       }
 
       return {
-        cursor: this.isGrab ? 'grabbing' : 'grab',
+        cursor: this.mouse.grab ? 'grabbing' : 'grab',
       }
     },
 
@@ -145,6 +139,7 @@ export default {
       }
 
       this.update()
+      this.allowMovement()
     },
 
     update() {
@@ -164,89 +159,82 @@ export default {
 
     scaleAt(at, amount) {
       // at in screen coords
+      const scale = this.scale * amount
+
       if (this.dirty) {
         this.update()
       }
 
-      this.scale *= amount
-      this.pos.x = at.x - (at.x - this.pos.x) * amount
-      this.pos.y = at.y - (at.y - this.pos.y) * amount
+      const isMinScale = scale < this.minScale
+
       this.dirty = true
+      this.scale = isMinScale ? 1 : scale
+      this.pos.x = isMinScale ? 0 : at.x - (at.x - this.pos.x) * amount
+      this.pos.y = isMinScale ? 0 : at.y - (at.y - this.pos.y) * amount
     },
 
-    //     getNode(name) {
-    //   const node = this.$refs[name]
+    getNode(name) {
+      const node = this.$refs[name]
 
-    //   return node?.getBoundingClientRect()
-    // },
+      return node?.getBoundingClientRect()
+    },
 
-    // async allowMovement() {
-    //   await this.$nextTick()
+    async allowMovement() {
+      await this.$nextTick()
 
-    //   this.image = this.getNode('image')
-    //   this.viewport = this.getNode('viewport')
+      this.image = this.getNode('image')
+      this.viewport = this.getNode('viewport')
 
-    //   if (!this.image || !this.viewport) {
-    //     return
-    //   }
+      if (!this.image || !this.viewport) {
+        return
+      }
 
-    //   this.isMovement =
-    //     this.viewport.top > this.image.top ||
-    //     this.viewport.left > this.image.left ||
-    //     this.viewport.right < this.image.right ||
-    //     this.viewport.bottom < this.image.bottom
-    // },
+      this.movement =
+        this.viewport.top > this.image.top ||
+        this.viewport.left > this.image.left ||
+        this.viewport.right < this.image.right ||
+        this.viewport.bottom < this.image.bottom
+    },
 
     mouseWheelEvent(event) {
-      const imageRef = this.$refs['image']
-      const viewportRef = this.$refs['viewport']
-      const viewport = viewportRef.getBoundingClientRect()
-      const image = imageRef.getBoundingClientRect()
-      console.log({
-        top: Math.max(0, image.top),
-        left: Math.max(0, image.left),
-      })
+      const image = this.$refs['image']
+      const viewport = this.$refs['viewport']
 
-      // console.log(Math.max(0, image.left), Math.max(0, image.top))
-      console.log(event.pageX, viewport.left, imageRef.width / 2)
+      const offsetTop = image.offsetTop + viewport.offsetTop
+      const offsetLeft = image.offsetLeft + viewport.offsetLeft
 
-      const x = event.pageX - viewport.left - imageRef.width / 2
-      const y = event.pageY - viewport.top - imageRef.height / 2
-      console.log(x, y)
+      const x = event.clientX - offsetLeft - image.width / 2
+      const y = event.clientY - offsetTop - image.height / 2
 
-      if (event.deltaY < 0) {
-        this.scaleAt({ x, y }, 1.1)
-        this.applyTo()
-      } else {
-        this.scaleAt({ x, y }, 1 / 1.1)
-        this.applyTo()
-      }
+      this.scaleAt({ x, y }, event.deltaY < 0 ? 1.2 : 1 / 1.2)
+      this.applyTo()
     },
 
     mouseEvent(event) {
-      // if (event.type === 'mousedown') {
-      //   this.mouse.button = true
-      // }
+      if (event.type === 'mousedown') {
+        this.mouse.grab = true
+      }
 
-      // if (event.type === 'mouseup' || event.type === 'mouseout') {
-      //   this.mouse.button = false
-      // }
+      if (event.type === 'mouseup' || event.type === 'mouseout') {
+        this.mouse.grab = false
+      }
 
-      // this.mouse.oldX = this.mouse.x
-      // this.mouse.oldY = this.mouse.y
-      // this.mouse.x = event.pageX
-      // this.mouse.y = event.pageY
+      this.mouse.oldX = this.mouse.x
+      this.mouse.oldY = this.mouse.y
+      this.mouse.x = event.clientX
+      this.mouse.y = event.clientY
 
-      // if (this.mouse.button) {
-      //   const image = this.$refs['image']
+      if (this.mouse.grab && this.movement) {
+        const image = this.$refs['image']
+        const viewportRef = this.$refs['viewport']
+        const viewport = viewportRef.getBoundingClientRect()
 
-      //   // pan
-      //   this.view.pan({
-      //     x: this.mouse.x - this.mouse.oldX,
-      //     y: this.mouse.y - this.mouse.oldY,
-      //   })
-      //   this.applyTo(image)
-      // }
+        this.pan({
+          x: this.mouse.x - this.mouse.oldX,
+          y: this.mouse.y - this.mouse.oldY,
+        })
+        this.applyTo()
+      }
 
       event.preventDefault()
     },
@@ -300,9 +288,9 @@ export default {
 .ui-zoom-image {
   max-width: 100%;
   max-height: 100%;
-  position: absolute;
-  top: 0px;
-  left: 0px;
+  // position: absolute;
+  // top: 0;
+  // left: 0;
   border: 1px solid red;
 }
 

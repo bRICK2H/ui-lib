@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%; display: flex; padding: 80px">
+  <div style="height: 100%; display: flex; padding: 5px 80px">
     <ui-zoom />
     <!-- width="300" -->
     <!-- height="500" -->

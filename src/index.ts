@@ -1,7 +1,7 @@
 import Vue from 'vue'
 
 const registerComponents = () => {
-  const module = require.context('./components', true, /ui-[\w]+\.vue$/)
+  const module = require.context('./components', true, /ui-[\w-]+\.vue$/)
 
   module.keys().forEach((path) => {
     const {

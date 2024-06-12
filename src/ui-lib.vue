@@ -8,7 +8,7 @@
   <!-- </ui-scrollbar> -->
 
   <div style="height: 100vh">
-    <VImageZoom />
+    <VImageViewer />
     <!-- <VInputButton /> -->
 
     <!-- <VTableContainer /> -->
@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import VImageZoom from '@/templates/image-zoom.vue'
+import VImageViewer from '@/templates/image-viewer.vue'
 import VTableContainer from '@/templates/table/index.vue'
 import UiExampleLoader from '@/components/_global/loader/example'
 // import VButtonTemplate from './components/button/templates'
@@ -70,7 +70,7 @@ import VTemplateFilters from '@/templates/filters.vue'
 export default {
   name: 'UiLib',
   components: {
-    VImageZoom,
+    VImageViewer,
     // VTemplateFilters,
     // IParent,
     // VTableContainer,

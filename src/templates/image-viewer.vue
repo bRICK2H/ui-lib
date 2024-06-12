@@ -1,6 +1,10 @@
 <template>
   <div style="height: 100%; display: flex; padding: 20px 80px">
-    <ui-zoom />
+    <ui-image-viewer
+      @scale="scale"
+      :minScale="1"
+      :maxScale="5"
+    />
     <!-- width="300" -->
     <!-- height="500" -->
   </div>
@@ -8,7 +12,13 @@
 
 <script>
 export default {
-  name: 'VImageZoom',
+  name: 'VImageViewer',
+
+  methods: {
+    scale(value) {
+      console.log('scale', value)
+    },
+  },
 }
 </script>
 

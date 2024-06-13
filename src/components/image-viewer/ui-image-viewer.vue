@@ -19,6 +19,10 @@
 export default {
   name: 'UiImageViewer',
 
+  model: {
+    prop: 'outerScale',
+  },
+
   props: {
     src: {
       type: String,
@@ -48,6 +52,11 @@ export default {
     maxScale: {
       type: Number,
       default: 20,
+    },
+
+    outerScale: {
+      type: Number,
+      default: 1,
     },
   },
 
@@ -101,9 +110,39 @@ export default {
   },
 
   watch: {
-    scale: {
-      immediate: true,
-      handler: 'setMovement',
+    scale() {
+      this.setMovement()
+    },
+
+    outerScale(curr, prev) {
+      console.error(curr, prev)
+      const scaleStepDirection =
+        curr > prev ? this.scaleStep : 1 / this.scaleStep
+
+      const getScale = (scale) => {
+        if (scale < this.minScale) {
+          return this.minScale
+        }
+
+        console.log(scale, this.maxScale)
+
+        if (scale > this.maxScale) {
+          return this.maxScale
+        }
+
+        return scale
+      }
+
+      const outerScale = getScale(curr)
+
+      console.log('getScale: ', getScale(curr))
+
+      // this.scale = getScale(this.outerScale, scaleStepDirection)
+      // this.translate.x = 0
+      // this.translate.y = 0
+      // console.error(this.scale)
+      this.$emit('input', getScale(curr))
+      this.offsetScaleImage({ x: 0, y: 0 }, scaleStepDirection)
     },
   },
 
@@ -137,13 +176,19 @@ export default {
       this.isMovementX = viewport.width < image.width
       this.isMovementY = viewport.height < image.height
 
+      const decimalPoint = String(this.maxScale * 100).length
+      const percentages = `${Math.round(
+        this.scale.toFixed(decimalPoint) * 100
+      )}%`
+
       this.$emit('scale', {
+        percentages,
         scale: this.scale,
-        percentages: `${Math.round(this.scale) * 100}%`,
       })
     },
 
     wheelEvent(event) {
+      console.log('wheelEvent')
       const image = this.$refs['image']
       const viewport = this.$refs['viewport']
       const { deltaY, clientX, clientY } = event
@@ -151,15 +196,17 @@ export default {
       // Image centering
       const offsetTop = image.offsetTop + viewport.offsetTop
       const offsetLeft = image.offsetLeft + viewport.offsetLeft
-      const offsetScale = deltaY < 0 ? this.scaleStep : 1 / this.scaleStep
+      const scaleStepDirection =
+        deltaY < 0 ? this.scaleStep : 1 / this.scaleStep
 
       const x = clientX - offsetLeft - image.width / 2
       const y = clientY - offsetTop - image.height / 2
 
-      this.offsetScaleImage({ x, y }, offsetScale)
+      this.offsetScaleImage({ x, y }, scaleStepDirection)
     },
 
     mouseEvent(event) {
+      console.log('mouseEvent')
       event.preventDefault()
 
       const { type, clientX, clientY } = event
@@ -182,8 +229,9 @@ export default {
       }
     },
 
-    async offsetScaleImage({ x, y }, offsetScale) {
-      const nextScale = this.scale * offsetScale
+    async offsetScaleImage({ x, y }, stepDirection) {
+      console.log('offsetScaleImage')
+      const nextScale = this.scale * stepDirection
 
       if (nextScale < this.minScale) {
         this.scale = this.minScale
@@ -193,18 +241,12 @@ export default {
         return
       }
 
-      if (nextScale > this.maxScale) {
-        this.scale = this.maxScale
-        /**
-         * 1. при maxScale нужно приравнять это же значение и сделать нужный translate
-         * 2. Определить пропс outerScale и оформить внешние расчеты scale
-         */
-        return
-      }
+      const scaleStepDirection =
+        nextScale > this.maxScale ? this.maxScale / this.scale : stepDirection
+      this.scale = nextScale > this.maxScale ? this.maxScale : nextScale
 
-      this.scale = nextScale
-      this.translate.x = x - (x - this.translate.x) * offsetScale
-      this.translate.y = y - (y - this.translate.y) * offsetScale
+      this.translate.x = x - (x - this.translate.x) * scaleStepDirection
+      this.translate.y = y - (y - this.translate.y) * scaleStepDirection
 
       await this.$nextTick()
 
@@ -245,7 +287,6 @@ export default {
 
     moveImage() {
       const diffX = (this.scaledViewport.width - this.scaledImage.width) / 2
-
       const diffY = (this.scaledViewport.height - this.scaledImage.height) / 2
 
       // Vertical correction
@@ -285,10 +326,13 @@ export default {
         return
       }
 
-      this.resizeObserver = new ResizeObserver(() =>
-        this.offsetScaleImage({ x: 0, y: 0 }, 0)
-      )
-      this.resizeObserver.observe(viewport)
+      // Наверное нужно юзать обычный ресайз
+
+      // this.resizeObserver = new ResizeObserver(() => {
+      //   this.setMovement()
+      //   this.offsetScaleImage({ x: 0, y: 0 }, 0)
+      // })
+      // this.resizeObserver.observe(viewport)
     },
 
     destroyEvents() {

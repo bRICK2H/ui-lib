@@ -1,17 +1,30 @@
 <template>
-  <div style="height: 100%; display: flex; padding: 20px 80px">
-    <ui-button @click="upScale"> Up </ui-button>
-    <ui-button @click="downScale"> Down </ui-button>
-    {{ outerScale }}
+  <div
+    style="
+      height: 100%;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      padding: 20px 80px;
+    "
+  >
+    <div style="padding-bottom: 20px">
+      <ui-button @click="upScale"> Up </ui-button>
+      <input
+        v-model="scalePercentage"
+        type="text"
+      />
+      <ui-button @click="downScale"> Down </ui-button>
+    </div>
 
     <ui-image-viewer
-      v-model="outerScale"
       :min-scale="1"
-      :max-scale="5"
+      :scale-count="scaleCount"
+      :scale-percentage="scalePercentage"
       @scale="scale"
     />
-    <!-- width="300" -->
     <!-- height="500" -->
+    <!-- width="300" -->
   </div>
 </template>
 
@@ -20,19 +33,21 @@ export default {
   name: 'VImageViewer',
 
   data: () => ({
-    outerScale: 1,
+    scaleCount: 1,
+    scalePercentage: 100,
   }),
 
   methods: {
-    scale(value) {
-      console.warn('scale', value, this.outerScale)
+    scale({ percentages }) {
+      this.scalePercentage = percentages
     },
 
     upScale() {
-      this.outerScale++
+      this.scaleCount++
     },
+
     downScale() {
-      this.outerScale--
+      this.scaleCount--
     },
   },
 }

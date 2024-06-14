@@ -19,10 +19,6 @@
 export default {
   name: 'UiImageViewer',
 
-  model: {
-    prop: 'outerScale',
-  },
-
   props: {
     src: {
       type: String,
@@ -54,15 +50,21 @@ export default {
       default: 20,
     },
 
-    outerScale: {
+    scaleCount: {
       type: Number,
-      default: 1,
+      default: 0,
+    },
+
+    scalePercentage: {
+      type: [Number, String],
+      default: 100,
     },
   },
 
   data: function () {
     return {
       scaleStep: 1.2,
+      currentScaleStep: 0,
       scale: this.minScale,
 
       isGrab: false,
@@ -111,38 +113,18 @@ export default {
 
   watch: {
     scale() {
-      this.setMovement()
+      this.setScaleMovement()
     },
 
-    outerScale(curr, prev) {
-      console.error(curr, prev)
-      const scaleStepDirection =
-        curr > prev ? this.scaleStep : 1 / this.scaleStep
+    scaleCount(curr, prev) {
+      const isZoomIn = curr > prev
 
-      const getScale = (scale) => {
-        if (scale < this.minScale) {
-          return this.minScale
-        }
+      this.setScale({ isZoomIn })
+      this.setScaleOffset({ x: 0, y: 0 })
+    },
 
-        console.log(scale, this.maxScale)
-
-        if (scale > this.maxScale) {
-          return this.maxScale
-        }
-
-        return scale
-      }
-
-      const outerScale = getScale(curr)
-
-      console.log('getScale: ', getScale(curr))
-
-      // this.scale = getScale(this.outerScale, scaleStepDirection)
-      // this.translate.x = 0
-      // this.translate.y = 0
-      // console.error(this.scale)
-      this.$emit('input', getScale(curr))
-      this.offsetScaleImage({ x: 0, y: 0 }, scaleStepDirection)
+    scalePercentage(percentage) {
+      this.setScalePercentage(percentage)
     },
   },
 
@@ -161,7 +143,7 @@ export default {
       return node?.getBoundingClientRect()
     },
 
-    async setMovement() {
+    async setScaleMovement() {
       await this.$nextTick()
 
       const image = this.getNode('image')
@@ -175,11 +157,44 @@ export default {
       this.scaledViewport = viewport
       this.isMovementX = viewport.width < image.width
       this.isMovementY = viewport.height < image.height
+    },
+
+    setScalePercentage(percentage) {
+      if (
+        percentage < this.minScale * 100 ||
+        percentage > this.maxScale * 100
+      ) {
+        return
+      }
+
+      this.scale = percentage / 100
+    },
+
+    setScale({ isZoomIn, scale } = {}) {
+      if (scale !== undefined) {
+        this.scale = scale
+      } else {
+        const stepDirection = isZoomIn ? this.scaleStep : 1 / this.scaleStep
+        const nextScale = this.scale * stepDirection
+
+        this.currentScaleStep =
+          nextScale > this.maxScale ? this.maxScale / this.scale : stepDirection
+
+        if (this.scale === this.minScale) {
+          this.currentScaleStep = 1
+        }
+
+        if (nextScale < this.minScale) {
+          this.scale = this.minScale
+        } else {
+          this.scale = nextScale > this.maxScale ? this.maxScale : nextScale
+        }
+      }
+
+      console.log('setScale', this.scale)
 
       const decimalPoint = String(this.maxScale * 100).length
-      const percentages = `${Math.round(
-        this.scale.toFixed(decimalPoint) * 100
-      )}%`
+      const percentages = Math.round(this.scale.toFixed(decimalPoint) * 100)
 
       this.$emit('scale', {
         percentages,
@@ -188,7 +203,6 @@ export default {
     },
 
     wheelEvent(event) {
-      console.log('wheelEvent')
       const image = this.$refs['image']
       const viewport = this.$refs['viewport']
       const { deltaY, clientX, clientY } = event
@@ -196,17 +210,16 @@ export default {
       // Image centering
       const offsetTop = image.offsetTop + viewport.offsetTop
       const offsetLeft = image.offsetLeft + viewport.offsetLeft
-      const scaleStepDirection =
-        deltaY < 0 ? this.scaleStep : 1 / this.scaleStep
 
+      const isZoomIn = deltaY < 0
       const x = clientX - offsetLeft - image.width / 2
       const y = clientY - offsetTop - image.height / 2
 
-      this.offsetScaleImage({ x, y }, scaleStepDirection)
+      this.setScale({ isZoomIn })
+      this.setScaleOffset({ x, y })
     },
 
     mouseEvent(event) {
-      console.log('mouseEvent')
       event.preventDefault()
 
       const { type, clientX, clientY } = event
@@ -225,49 +238,34 @@ export default {
       this.client.y = clientY
 
       if (this.isGrab && this.isMovement) {
-        this.moveImage()
+        this.setOffset()
       }
     },
 
-    async offsetScaleImage({ x, y }, stepDirection) {
-      console.log('offsetScaleImage')
-      const nextScale = this.scale * stepDirection
-
-      if (nextScale < this.minScale) {
-        this.scale = this.minScale
-        this.translate.x = 0
-        this.translate.y = 0
-
-        return
-      }
-
-      const scaleStepDirection =
-        nextScale > this.maxScale ? this.maxScale / this.scale : stepDirection
-      this.scale = nextScale > this.maxScale ? this.maxScale : nextScale
-
-      this.translate.x = x - (x - this.translate.x) * scaleStepDirection
-      this.translate.y = y - (y - this.translate.y) * scaleStepDirection
+    async setScaleOffset({ x, y }) {
+      this.translate.x = x - (x - this.translate.x) * this.currentScaleStep
+      this.translate.y = y - (y - this.translate.y) * this.currentScaleStep
 
       await this.$nextTick()
 
       const image = this.getNode('image')
       const viewport = this.getNode('viewport')
 
-      const topDiff = image.top - viewport.top
-      const leftDiff = image.left - viewport.left
-      const rightDiff = image.right - viewport.right
-      const bottomDiff = image.bottom - viewport.bottom
+      const diffTop = image.top - viewport.top
+      const diffLeft = image.left - viewport.left
+      const diffRight = image.right - viewport.right
+      const diffBottom = image.bottom - viewport.bottom
 
       // Vertical correction
       if (viewport.width > image.width) {
         this.translate.x = 0
       } else {
-        if (leftDiff > 0) {
-          this.translate.x -= leftDiff
+        if (diffLeft > 0) {
+          this.translate.x -= diffLeft
         }
 
-        if (rightDiff < 0) {
-          this.translate.x -= rightDiff
+        if (diffRight < 0) {
+          this.translate.x -= diffRight
         }
       }
 
@@ -275,17 +273,17 @@ export default {
       if (viewport.height > image.height) {
         this.translate.y = 0
       } else {
-        if (topDiff > 0) {
-          this.translate.y -= topDiff
+        if (diffTop > 0) {
+          this.translate.y -= diffTop
         }
 
-        if (bottomDiff < 0) {
-          this.translate.y -= bottomDiff
+        if (diffBottom < 0) {
+          this.translate.y -= diffBottom
         }
       }
     },
 
-    moveImage() {
+    setOffset() {
       const diffX = (this.scaledViewport.width - this.scaledImage.width) / 2
       const diffY = (this.scaledViewport.height - this.scaledImage.height) / 2
 
@@ -316,27 +314,34 @@ export default {
       }
     },
 
-    registerEvents() {
-      document.addEventListener('mouseup', this.mouseEvent)
-      document.addEventListener('mousemove', this.mouseEvent)
-
+    resizeViewport() {
       const viewport = this.$refs['viewport']
 
       if (!viewport) {
         return
       }
 
-      // Наверное нужно юзать обычный ресайз
+      this.resizeObserver = new ResizeObserver(() => {
+        this.setScale({ scale: this.minScale })
+        this.setScaleOffset({ x: 0, y: 0 })
+        this.setScaleMovement()
+      })
 
-      // this.resizeObserver = new ResizeObserver(() => {
-      //   this.setMovement()
-      //   this.offsetScaleImage({ x: 0, y: 0 }, 0)
-      // })
-      // this.resizeObserver.observe(viewport)
+      this.resizeObserver.observe(viewport)
+    },
+
+    removeResizeViewport() {
+      this.resizeObserver?.disconnect()
+    },
+
+    registerEvents() {
+      this.resizeViewport()
+      document.addEventListener('mouseup', this.mouseEvent)
+      document.addEventListener('mousemove', this.mouseEvent)
     },
 
     destroyEvents() {
-      this.resizeObserver?.disconnect()
+      this.removeResizeViewport()
       document.removeEventListener('mouseup', this.mouseEvent)
       document.removeEventListener('mousemove', this.mouseEvent)
     },

@@ -20,7 +20,7 @@ export default {
   name: 'UiImageViewer',
 
   props: {
-    src: {
+    url: {
       type: String,
       default: '',
     },
@@ -61,24 +61,22 @@ export default {
     },
   },
 
-  data: function () {
-    return {
-      scaleStep: 1.2,
-      currentScaleStep: 0,
-      scale: this.minScale,
+  data: () => ({
+    scale: 1,
+    scaleStep: 1.2,
+    currentScaleStep: 0,
 
-      isGrab: false,
-      isMovementX: false,
-      isMovementY: false,
+    isGrab: false,
+    isMovementX: false,
+    isMovementY: false,
 
-      scaledImage: null,
-      scaledViewport: null,
-      resizeObserver: null,
+    scaledImage: null,
+    scaledViewport: null,
+    resizeObserver: null,
 
-      translate: { x: 0, y: 0 },
-      client: { x: 0, y: 0, oldX: 0, oldY: 0 },
-    }
-  },
+    translate: { x: 0, y: 0 },
+    client: { x: 0, y: 0, oldX: 0, oldY: 0 },
+  }),
 
   computed: {
     isMovement() {
@@ -143,6 +141,17 @@ export default {
       return node?.getBoundingClientRect()
     },
 
+    setScalePercentage(percentage) {
+      if (
+        percentage < this.minScale * 100 ||
+        percentage > this.maxScale * 100
+      ) {
+        return
+      }
+
+      this.scale = percentage / 100
+    },
+
     async setScaleMovement() {
       await this.$nextTick()
 
@@ -157,17 +166,6 @@ export default {
       this.scaledViewport = viewport
       this.isMovementX = viewport.width < image.width
       this.isMovementY = viewport.height < image.height
-    },
-
-    setScalePercentage(percentage) {
-      if (
-        percentage < this.minScale * 100 ||
-        percentage > this.maxScale * 100
-      ) {
-        return
-      }
-
-      this.scale = percentage / 100
     },
 
     setScale({ isZoomIn, scale } = {}) {
@@ -190,8 +188,6 @@ export default {
           this.scale = nextScale > this.maxScale ? this.maxScale : nextScale
         }
       }
-
-      console.log('setScale', this.scale)
 
       const decimalPoint = String(this.maxScale * 100).length
       const percentages = Math.round(this.scale.toFixed(decimalPoint) * 100)

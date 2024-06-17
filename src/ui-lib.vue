@@ -7,7 +7,7 @@
 
   <!-- </ui-scrollbar> -->
 
-  <div style="height: 100vh">
+  <div style="width: 100%; height: 100vh; position: relative">
     <VImageViewer />
     <!-- <VInputButton /> -->
 

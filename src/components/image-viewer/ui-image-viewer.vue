@@ -7,8 +7,8 @@
       ref="image"
       :alt="alt"
       :style="[size, cursor, transform]"
-      class="ui-image-viewer-control-item"
       src="@/assets/images/map.png"
+      class="ui-image-viewer-control-item"
       @mousedown="mouseEvent"
       @wheel.prevent="wheelEvent"
     />
@@ -64,18 +64,22 @@ export default {
   data: () => ({
     scale: 1,
     scaleStep: 1.2,
+    percentages: 100,
     currentScaleStep: 0,
+    primaryImageOffsetX: 0,
+    primaryImageOffsetY: 0,
+
+    translate: { x: 0, y: 0 },
+    client: { x: 0, y: 0, oldX: 0, oldY: 0 },
 
     isGrab: false,
+    isWheel: false,
     isMovementX: false,
     isMovementY: false,
 
     scaledImage: null,
     scaledViewport: null,
     resizeObserver: null,
-
-    translate: { x: 0, y: 0 },
-    client: { x: 0, y: 0, oldX: 0, oldY: 0 },
   }),
 
   computed: {
@@ -118,11 +122,18 @@ export default {
       const isZoomIn = curr > prev
 
       this.setScale({ isZoomIn })
-      this.setScaleOffset({ x: 0, y: 0 })
+
+      if (!this.isWheel) {
+        this.setScaleOffset({ x: 0, y: 0 })
+      }
     },
 
     scalePercentage(percentage) {
       this.setScalePercentage(percentage)
+
+      if (!this.isWheel) {
+        this.setScaleOffset({ x: 0, y: 0 })
+      }
     },
   },
 
@@ -150,6 +161,13 @@ export default {
       }
 
       this.scale = percentage / 100
+    },
+
+    setImageOffset() {
+      const { x, y } = this.getNode('image')
+
+      this.primaryImageOffsetX = x
+      this.primaryImageOffsetY = y
     },
 
     async setScaleMovement() {
@@ -190,27 +208,24 @@ export default {
       }
 
       const decimalPoint = String(this.maxScale * 100).length
-      const percentages = Math.round(this.scale.toFixed(decimalPoint) * 100)
+      this.percentages = Math.round(this.scale.toFixed(decimalPoint) * 100)
 
       this.$emit('scale', {
-        percentages,
         scale: this.scale,
+        percentages: this.percentages,
       })
     },
 
     wheelEvent(event) {
       const image = this.$refs['image']
-      const viewport = this.$refs['viewport']
       const { deltaY, clientX, clientY } = event
 
       // Image centering
-      const offsetTop = image.offsetTop + viewport.offsetTop
-      const offsetLeft = image.offsetLeft + viewport.offsetLeft
-
       const isZoomIn = deltaY < 0
-      const x = clientX - offsetLeft - image.width / 2
-      const y = clientY - offsetTop - image.height / 2
+      const x = clientX - this.primaryImageOffsetX - image.width / 2
+      const y = clientY - this.primaryImageOffsetY - image.height / 2
 
+      this.isWheel = true
       this.setScale({ isZoomIn })
       this.setScaleOffset({ x, y })
     },
@@ -243,6 +258,7 @@ export default {
       this.translate.y = y - (y - this.translate.y) * this.currentScaleStep
 
       await this.$nextTick()
+      this.isWheel = false
 
       const image = this.getNode('image')
       const viewport = this.getNode('viewport')
@@ -321,6 +337,7 @@ export default {
         this.setScale({ scale: this.minScale })
         this.setScaleOffset({ x: 0, y: 0 })
         this.setScaleMovement()
+        this.setImageOffset()
       })
 
       this.resizeObserver.observe(viewport)

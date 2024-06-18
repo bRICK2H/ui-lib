@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import throttle from 'lodash/throttle'
+
 export default {
   name: 'UiImageViewer',
 
@@ -65,6 +67,7 @@ export default {
     scale: 1,
     scaleStep: 1.2,
     percentages: 100,
+    throttleDelay: 300,
     currentScaleStep: 0,
     primaryImageOffsetX: 0,
     primaryImageOffsetY: 0,
@@ -137,6 +140,10 @@ export default {
     },
   },
 
+  created() {
+    this.throttleUpdateCoords = throttle(this.updateCoords, this.throttleDelay)
+  },
+
   mounted() {
     this.registerEvents()
   },
@@ -163,11 +170,17 @@ export default {
       this.scale = percentage / 100
     },
 
-    setImageOffset() {
-      const { x, y } = this.getNode('image')
+    async setImageOffset() {
+      await this.$nextTick()
 
-      this.primaryImageOffsetX = x
-      this.primaryImageOffsetY = y
+      const image = this.getNode('image')
+
+      if (!image) {
+        return
+      }
+
+      this.primaryImageOffsetX = image.x
+      this.primaryImageOffsetY = image.y
     },
 
     async setScaleMovement() {
@@ -254,6 +267,13 @@ export default {
     },
 
     async setScaleOffset({ x, y }) {
+      if (x === 0 && y === 0) {
+        this.translate.x = 0
+        this.translate.y = 0
+
+        return
+      }
+
       this.translate.x = x - (x - this.translate.x) * this.currentScaleStep
       this.translate.y = y - (y - this.translate.y) * this.currentScaleStep
 
@@ -333,30 +353,33 @@ export default {
         return
       }
 
-      this.resizeObserver = new ResizeObserver(() => {
-        this.setScale({ scale: this.minScale })
-        this.setScaleOffset({ x: 0, y: 0 })
-        this.setScaleMovement()
-        this.setImageOffset()
-      })
-
+      this.resizeObserver = new ResizeObserver(this.updateCoords)
       this.resizeObserver.observe(viewport)
     },
 
-    removeResizeViewport() {
-      this.resizeObserver?.disconnect()
+    updateCoords() {
+      this.setScale({ scale: this.minScale })
+      this.setScaleOffset({ x: 0, y: 0 })
+      this.setScaleMovement()
+      this.setImageOffset()
     },
 
     registerEvents() {
       this.resizeViewport()
       document.addEventListener('mouseup', this.mouseEvent)
       document.addEventListener('mousemove', this.mouseEvent)
+      window.addEventListener('resize', this.throttleUpdateCoords)
     },
 
     destroyEvents() {
       this.removeResizeViewport()
       document.removeEventListener('mouseup', this.mouseEvent)
       document.removeEventListener('mousemove', this.mouseEvent)
+      window.removeEventListener('resize', this.throttleUpdateCoords)
+    },
+
+    removeResizeViewport() {
+      this.resizeObserver.disconnect()
     },
   },
 }

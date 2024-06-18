@@ -7,7 +7,7 @@
       ref="image"
       :alt="alt"
       :style="[size, cursor, transform]"
-      src="@/assets/images/map.png"
+      src="@/assets/images/5.jpg"
       class="ui-image-viewer-control-item"
       @mousedown="mouseEvent"
       @wheel.prevent="wheelEvent"
@@ -381,7 +381,9 @@ export default {
       this.resizeObserver.observe(image)
     },
 
-    updateCoords() {
+    async updateCoords() {
+      await this.$nextTick()
+
       this.setScale({ scale: this.minScale })
       this.setScaleOffset({ x: 0, y: 0 })
       this.setScaleMovement()

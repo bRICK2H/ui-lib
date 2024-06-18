@@ -22,41 +22,65 @@ export default {
   name: 'UiImageViewer',
 
   props: {
+    /**
+     * Путь к графическому файлу
+     */
     url: {
       type: String,
       default: '',
     },
 
+    /**
+     * Альтернативный текст для изображения
+     */
     alt: {
       type: String,
       default: '',
     },
 
+    /**
+     * Ширина изображения
+     */
     width: {
       type: [Number, String],
       default: 'none',
     },
 
+    /**
+     * Высота изображения
+     */
     height: {
       type: [Number, String],
       default: 'none',
     },
 
+    /**
+     * Минимальное значение масштабирования
+     */
     minScale: {
       type: Number,
       default: 1,
     },
 
+    /**
+     * Максимальное значение масштабирования
+     */
     maxScale: {
       type: Number,
       default: 20,
     },
 
+    /**
+     * Счетчик, обновляет масштаб при инкременте и декременте
+     */
     scaleCount: {
       type: Number,
       default: 0,
     },
 
+    /**
+     * Процентное соотношения, обновление масштаба в конкретных процентах
+     */
     scalePercentage: {
       type: [Number, String],
       default: 100,
@@ -347,14 +371,14 @@ export default {
     },
 
     resizeViewport() {
-      const viewport = this.$refs['viewport']
+      const image = this.$refs['image']
 
-      if (!viewport) {
+      if (!image) {
         return
       }
 
       this.resizeObserver = new ResizeObserver(this.updateCoords)
-      this.resizeObserver.observe(viewport)
+      this.resizeObserver.observe(image)
     },
 
     updateCoords() {

@@ -1,17 +1,20 @@
 <template>
-  <div
-    ref="viewport"
-    class="ui-image-viewer-viewport"
-  >
-    <img
-      ref="image"
-      :alt="alt"
-      :style="[size, cursor, transform]"
-      src="@/assets/images/5.jpg"
-      class="ui-image-viewer-control-item"
-      @mousedown="mouseEvent"
-      @wheel.prevent="wheelEvent"
-    />
+  <div class="ui-image-viewer">
+    <div
+      ref="viewport"
+      :style="viewportSize"
+      class="ui-image-viewer-viewport"
+    >
+      <img
+        ref="image"
+        :alt="alt"
+        :style="[imageCursor, imageTransform]"
+        src="@/assets/images/5.jpg"
+        class="ui-image-viewer-control-item"
+        @mousedown="mouseEvent"
+        @wheel.prevent="wheelEvent"
+      />
+    </div>
   </div>
 </template>
 
@@ -28,6 +31,7 @@ export default {
     url: {
       type: String,
       default: '',
+      // required: true,
     },
 
     /**
@@ -39,27 +43,19 @@ export default {
     },
 
     /**
-     * Ширина изображения
+     * Ширина области просмотра
      */
     width: {
       type: [Number, String],
-      default: 'none',
+      default: 'auto',
     },
 
     /**
-     * Высота изображения
+     * Высота области просмотра
      */
     height: {
       type: [Number, String],
-      default: 'none',
-    },
-
-    /**
-     * Минимальное значение масштабирования
-     */
-    minScale: {
-      type: Number,
-      default: 1,
+      default: 'auto',
     },
 
     /**
@@ -67,7 +63,7 @@ export default {
      */
     maxScale: {
       type: Number,
-      default: 20,
+      default: 10,
     },
 
     /**
@@ -82,15 +78,16 @@ export default {
      * Процентное соотношения, обновление масштаба в конкретных процентах
      */
     scalePercentage: {
-      type: [Number, String],
+      type: Number,
       default: 100,
     },
   },
 
   data: () => ({
     scale: 1,
+    minScale: 1,
     scaleStep: 1.2,
-    percentages: 100,
+    originalScale: 1,
     throttleDelay: 300,
     currentScaleStep: 0,
     primaryImageOffsetX: 0,
@@ -114,14 +111,7 @@ export default {
       return this.isMovementX || this.isMovementY
     },
 
-    size() {
-      return {
-        maxWidth: this.width === 'none' ? null : `${this.width}px`,
-        maxHeight: this.height === 'none' ? null : `${this.height}px`,
-      }
-    },
-
-    cursor() {
+    imageCursor() {
       if (!this.isMovement) {
         return {
           cursor: 'default',
@@ -133,9 +123,26 @@ export default {
       }
     },
 
-    transform() {
+    imageTransform() {
       return {
         transform: `translate(${this.translate.x}px, ${this.translate.y}px) scale(${this.scale})`,
+      }
+    },
+
+    viewportSize() {
+      return {
+        maxWidth:
+          this.width === 'auto'
+            ? null
+            : typeof this.width === 'string'
+            ? this.width
+            : `${this.width}px`,
+        maxHeight:
+          this.height === 'auto'
+            ? null
+            : typeof this.height === 'string'
+            ? this.height
+            : `${this.height}px`,
       }
     },
   },
@@ -146,9 +153,7 @@ export default {
     },
 
     scaleCount(curr, prev) {
-      const isZoomIn = curr > prev
-
-      this.setScale({ isZoomIn })
+      this.setScale({ isZoomIn: curr > prev })
 
       if (!this.isWheel) {
         this.setScaleOffset({ x: 0, y: 0 })
@@ -156,11 +161,12 @@ export default {
     },
 
     scalePercentage(percentage) {
-      this.setScalePercentage(percentage)
-
-      if (!this.isWheel) {
-        this.setScaleOffset({ x: 0, y: 0 })
+      if (this.isWheel) {
+        return
       }
+
+      this.setScalePercentage(percentage)
+      this.setScaleOffset({ x: 0, y: 0 })
     },
   },
 
@@ -183,15 +189,51 @@ export default {
       return node?.getBoundingClientRect()
     },
 
+    getNaturalImageSize() {
+      const image = this.$refs['image']
+
+      return {
+        width: image.naturalWidth,
+        height: image.naturalHeight,
+      }
+    },
+
+    getPercentages(scale) {
+      const decimalPoint = String(
+        (this.maxScale - this.originalScale) * 100
+      ).length
+
+      return Math.round(scale.toFixed(decimalPoint) * 100)
+    },
+
+    defineOriginalScale() {
+      const image = this.getNaturalImageSize()
+      const viewport = this.getNode('viewport')
+
+      const originalScale = Math.min(
+        viewport.width / image.width,
+        viewport.height / image.height
+      )
+
+      this.originalScale =
+        originalScale < this.minScale ? originalScale : this.minScale
+    },
+
     setScalePercentage(percentage) {
+      const diffPercentage = this.getPercentages(1 - this.originalScale)
+      const currentPercentage = percentage + diffPercentage
+
+      const minPercentage = this.getPercentages(this.minScale)
+      const maxPercentage = this.getPercentages(this.maxScale) + diffPercentage
+
       if (
-        percentage < this.minScale * 100 ||
-        percentage > this.maxScale * 100
+        currentPercentage < minPercentage ||
+        currentPercentage > maxPercentage
       ) {
         return
       }
 
-      this.scale = percentage / 100
+      this.setScale({ scale: currentPercentage / 100 })
     },
 
     async setImageOffset() {
@@ -224,6 +266,8 @@ export default {
     },
 
     setScale({ isZoomIn, scale } = {}) {
+      const offsetMaxScale = this.maxScale + (1 - this.originalScale)
+
       if (scale !== undefined) {
         this.scale = scale
       } else {
@@ -231,7 +275,9 @@ export default {
         const nextScale = this.scale * stepDirection
 
         this.currentScaleStep =
-          nextScale > this.maxScale ? this.maxScale / this.scale : stepDirection
+          nextScale > offsetMaxScale
+            ? offsetMaxScale / this.scale
+            : stepDirection
 
         if (this.scale === this.minScale) {
           this.currentScaleStep = 1
@@ -240,16 +286,17 @@ export default {
         if (nextScale < this.minScale) {
           this.scale = this.minScale
         } else {
-          this.scale = nextScale > this.maxScale ? this.maxScale : nextScale
+          this.scale = nextScale > offsetMaxScale ? offsetMaxScale : nextScale
         }
       }
 
-      const decimalPoint = String(this.maxScale * 100).length
-      this.percentages = Math.round(this.scale.toFixed(decimalPoint) * 100)
+      const offsetScale = this.scale - 1 + this.originalScale
 
       this.$emit('scale', {
-        scale: this.scale,
-        percentages: this.percentages,
+        scale: offsetScale,
+        percentage: this.getPercentages(offsetScale),
+        maxPercentage: this.getPercentages(this.maxScale),
+        minPercentage: this.getPercentages(this.originalScale),
       })
     },
 
@@ -384,6 +431,7 @@ export default {
     async updateCoords() {
       await this.$nextTick()
 
+      this.defineOriginalScale()
       this.setScale({ scale: this.minScale })
       this.setScaleOffset({ x: 0, y: 0 })
       this.setScaleMovement()
@@ -412,6 +460,11 @@ export default {
 </script>
 
 <style lang="scss">
+.ui-image-viewer {
+  overflow: hidden;
+}
+
+.ui-image-viewer,
 .ui-image-viewer-viewport {
   width: 100%;
   height: 100%;
@@ -419,9 +472,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-
-  overflow: hidden;
-  position: relative;
 }
 
 .ui-image-viewer-control-item {

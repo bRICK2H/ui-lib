@@ -20,12 +20,12 @@
       "
     >
       <div style="padding-bottom: 20px">
-        <ui-button @click="upScale"> Up </ui-button>
+        <ui-button @click="downScale"> Down </ui-button>
         <input
           v-model="scalePercentage"
           type="text"
         />
-        <ui-button @click="downScale"> Down </ui-button>
+        <ui-button @click="upScale"> Up </ui-button>
       </div>
 
       <ui-image-viewer
@@ -46,12 +46,13 @@ export default {
 
   data: () => ({
     scaleCount: 1,
-    scalePercentage: 100,
+    scalePercentage: 0,
   }),
 
   methods: {
-    scale({ percentages }) {
-      this.scalePercentage = percentages
+    scale({ percentage }) {
+      console.log('scale', percentage)
+      this.scalePercentage = percentage
     },
 
     upScale() {

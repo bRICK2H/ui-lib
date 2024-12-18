@@ -124,16 +124,28 @@
   }
 
   @include when(enabled) {
-    // When state hover
-    &:hover {
-      color: $color-hover;
-      background-color: $background-color-hover;
+    // Only where a guidance effect is possible
+    @media (hover: hover) {
+      // When state hover
+      &:hover {
+        color: $color-hover;
+        background-color: $background-color-hover;
+      }
+
+      // When state active
+      &:active {
+        color: $color-active;
+        background-color: $background-color-active;
+      }
     }
 
-    // When state active
-    &:active {
-      color: $color-active;
-      background-color: $background-color-active;
+    // For touch screens only
+    @media (hover: none) {
+      // When state active
+      &:active {
+        color: $color-hover;
+        background-color: $background-color-hover;
+      }
     }
 
     // When state focus
